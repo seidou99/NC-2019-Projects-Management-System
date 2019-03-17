@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create new user</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    &times;
+  </button>
+</div>
+<form [formGroup]="newUserForm" (ngSubmit)="submitForm()">
+  <div class="modal-body">
+    <div class="container">
+      <div class="form-group">
+        <label>User email</label>
+        <input type="text" class="form-control" formControlName="email">
+
+        <label>Password</label>
+        <input type="text" class="form-control" formControlName="password">
+
+        <label>Password confirmation</label>
+        <input type="text" class="form-control" formControlName="passwordConfirmation">
+
+        <label>User name</label>
+        <input type="text" class="form-control" formControlName="name">
+
+        <label>User surname</label>
+        <input type="text" class="form-control" formControlName="surname">
+
+        <label>User role</label>
+        <input type="text" class="form-control" formControlName="role">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" [disabled]="!newUserForm.valid">Create</button>
+  </div>
+</form>
+

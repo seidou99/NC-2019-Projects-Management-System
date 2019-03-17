@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+}
+
+.buttons-container > * + * {
+  margin-left: 0.5em;
+}
+
+button:focus, button:hover {
+  cursor: pointer;
+}
+
+.wrapper {
+  max-width: 1400px;
+  width: 100%;
+  margin: auto;
+}
+
+.close:focus {
+  outline: none;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.modal-open .modal {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.navbar-gray {
+  background-color: #fafafa;
+}

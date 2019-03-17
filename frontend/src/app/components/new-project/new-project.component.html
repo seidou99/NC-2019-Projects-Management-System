@@ -1,0 +1,21 @@
+<div class="modal-header">
+  <h4 class="modal-title">Create new project</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    &times;
+  </button>
+</div>
+<form [formGroup]="newProjectForm" (ngSubmit)="submitForm()">
+  <div class="modal-body">
+    <div class="container">
+      <div class="form-group">
+        <label>Code</label>
+        <input type="text" class="form-control" formControlName="code">
+        <label>Summary</label>
+        <input type="text" class="form-control" formControlName="summary">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" [disabled]="!newProjectForm.valid">Create</button>
+  </div>
+</form>

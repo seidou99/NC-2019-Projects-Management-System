@@ -1,0 +1,7 @@
+textarea {
+  min-height: 7em;
+}
+
+input {
+  display: inline-block;
+}
