@@ -10,19 +10,32 @@
       <div class="form-group">
         <label>Project code</label>
         <input type="text" class="form-control" formControlName="projectCode">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('projectCode', 'required')">
+          Project code is required
+        </div>
+      </div>
 
+      <div class="form-group">
         <label>Description</label>
         <input type="text" class="form-control" formControlName="description">
+      </div>
 
+      <div class="form-group">
         <label>Priority</label>
         <input type="text" class="form-control" formControlName="priority">
+      </div>
 
+      <div class="form-group">
         <label>Due Date</label>
         <input type="text" class="form-control" formControlName="dueDate">
+      </div>
 
+      <div class="form-group">
         <label>Estimation</label>
         <input type="text" class="form-control" formControlName="estimation">
+      </div>
 
+      <div class="form-group">
         <label>Assignee</label>
         <input type="text" class="form-control" formControlName="assignee">
       </div>

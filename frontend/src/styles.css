@@ -29,6 +29,10 @@ button:focus, button:hover {
   align-items: center !important;
 }
 
-.navbar-gray {
-  background-color: #fafafa;
+nav {
+  background-color: #404040;
+}
+
+.vh-100 {
+  height: 100vh;
 }

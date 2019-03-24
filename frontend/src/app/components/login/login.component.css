@@ -1,0 +1,9 @@
+.login-container {
+  max-width: 400px;
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  position: relative;
+  top: 1px;
+}

@@ -1,9 +1,12 @@
+import {TaskPriority} from './TaskPriority';
+import {TaskStatus} from './TaskStatus';
+
 export class Task {
   projectId: number;
   taskId: number;
   taskCode: string;
-  taskPriority: string;
-  taskStatus: string;
+  taskPriority: TaskPriority;
+  taskStatus: TaskStatus;
   created: Date;
   updated: Date;
   dueDate: Date;

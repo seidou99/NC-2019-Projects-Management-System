@@ -18,3 +18,7 @@ table thead th {
 .input-group button:focus, .input-group input:focus {
   z-index: 20;
 }
+
+input, input:focus {
+  border: none;
+}

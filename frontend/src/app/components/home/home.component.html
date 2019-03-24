@@ -1,14 +1,14 @@
-<nav class="navbar-gray">
+<nav>
   <div class="wrapper p-3">
     <div class="d-flex justify-content-between flex-wrap">
       <div class="buttons-container">
-        <button class="btn btn-outline-primary" (click)="openNewProjectModal()">New Project</button>
-        <button class="btn btn-outline-primary" (click)="openNewTaskModal()">New Task</button>
-        <button class="btn btn-outline-primary" (click)="openNewUserModal()">New User</button>
+        <button class="btn btn-outline-secondary" (click)="openNewProjectModal()">New Project</button>
+        <button class="btn btn-outline-secondary" (click)="openNewTaskModal()">New Task</button>
+        <button class="btn btn-outline-secondary" (click)="openNewUserModal()">New User</button>
       </div>
-      <form class="form-group m-0">
+      <form>
         <div class="input-group">
-          <input type="text" class="form-control position-relative" placeholder="Enter filter">
+          <input type="text" class="form-control position-relative d-block" placeholder="Enter filter">
           <div class="input-group-append">
             <button class="btn btn-outline-secondary btn-right-append position-relative" type="button">Search</button>
           </div>
@@ -19,7 +19,7 @@
 </nav>
 
 
-<div class="wrapper p-3">
+<div class="wrapper p-3 mt-5">
   <div class="table-wrapper">
     <table class="table table-hover">
       <thead>

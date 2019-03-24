@@ -10,26 +10,70 @@
       <div class="form-group">
         <label>User email</label>
         <input type="text" class="form-control" formControlName="email">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('email', 'required')">
+          Email is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('email', 'email')">
+          Email isn't valid
+        </div>
 
         <label>Password</label>
-        <input type="text" class="form-control" formControlName="password">
+        <input type="password" class="form-control" formControlName="password" (keyup)="passwordConfirmation()">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('password', 'required')">
+          Password is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('password', 'minlength')">
+          Password length must be {{validationConfigs.password.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('password', 'maxlength')">
+          Password length must be {{validationConfigs.password.maxlength}} symbols length or less
+        </div>
 
         <label>Password confirmation</label>
-        <input type="text" class="form-control" formControlName="passwordConfirmation">
+        <input type="password" class="form-control" formControlName="passwordConfirmation" (keyup)="passwordConfirmation()">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('passwordConfirmation', 'required')">
+          Password confirmation is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="!isPasswordConfirmed && !hasError('passwordConfirmation', 'required')">
+          Passwords don't match
+        </div>
 
         <label>User name</label>
         <input type="text" class="form-control" formControlName="name">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('name', 'required')">
+          Name is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('name', 'minlength')">
+          Name must be {{validationConfigs.name.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('name', 'maxlength')">
+          Name must be {{validationConfigs.name.maxlength}} symbols length or less
+        </div>
 
         <label>User surname</label>
         <input type="text" class="form-control" formControlName="surname">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('surname', 'required')">
+          Surname is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('surname', 'minlength')">
+          Surname must be {{validationConfigs.surname.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('surname', 'maxlength')">
+          Surname must be {{validationConfigs.surname.maxlength}} symbols length or less
+        </div>
 
         <label>User role</label>
-        <input type="text" class="form-control" formControlName="role">
+        <select class="form-control" formControlName="role">
+          <option *ngFor="let role of availableRoles">{{role}}</option>
+        </select>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('role', 'required')">
+          Role is required
+        </div>
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" [disabled]="!newUserForm.valid">Create</button>
+    <button class="btn btn-success" [disabled]="!newUserForm.valid && isPasswordConfirmed">Create</button>
   </div>
 </form>
 

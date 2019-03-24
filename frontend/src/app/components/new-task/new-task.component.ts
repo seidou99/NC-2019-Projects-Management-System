@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {validationConfigs} from '../../configs/validation-config';
+import {hasError} from '../../util/has-error';
+import {HasError} from '../../models/HasError';
 
 @Component({
   selector: 'app-new-task',
@@ -10,16 +13,19 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 export class NewTaskComponent implements OnInit {
 
   newTaskForm: FormGroup;
+  hasError;
+  validationConfigs = validationConfigs;
 
   constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
     this.newTaskForm = this.formBuilder.group({
-      projectCode: '',
-      description: '',
+      projectCode: new FormControl('', [Validators.required]),
+      description: new FormControl('', [Validators.required]),
       priority: '',
       dueDate: '',
       estimation: '',
       assignee: ''
     });
+    this.hasError = hasError(this.newTaskForm);
   }
 
   ngOnInit() {

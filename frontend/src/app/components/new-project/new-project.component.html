@@ -10,8 +10,29 @@
       <div class="form-group">
         <label>Code</label>
         <input type="text" class="form-control" formControlName="code">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'required')">
+          Code is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'minlength')">
+          Code length must be {{validationConfigs.projectCode.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'maxlength')">
+          Code length must be {{validationConfigs.projectCode.maxlength}} symbols length or less
+        </div>
+      </div>
+
+      <div class="form-group">
         <label>Summary</label>
         <input type="text" class="form-control" formControlName="summary">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('summary', 'required')">
+          Summary is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('summary', 'minlength')">
+          Summary length must be {{validationConfigs.projectSummary.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('summary', 'maxlength')">
+          Summary length must be {{validationConfigs.projectSummary.maxlength}} symbols length or less
+        </div>
       </div>
     </div>
   </div>
