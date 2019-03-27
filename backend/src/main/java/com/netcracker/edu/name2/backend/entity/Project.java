@@ -1,0 +1,37 @@
+package com.netcracker.edu.name2.backend.entity;
+
+import javax.persistence.*;
+
+@Entity
+public class Project {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 6, nullable = false, unique = true)
+    private String code;
+
+    @Column(length = 200, nullable = false)
+    private String summary;
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+}
