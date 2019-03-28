@@ -1,19 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {validationConfigs} from '../../configs/validation-config';
-import {hasError} from '../../util/has-error';
-import {HasError} from '../../models/HasError';
+import {validationConfigs} from '../../configs/conf';
+import {createHasError, HasErrorFunction} from '../../util/has-error';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, HasError {
+export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   validationConfigs = validationConfigs;
-  hasError;
+  hasError: HasErrorFunction;
 
   constructor(private formBuilder: FormBuilder) {
     this.loginForm = this.formBuilder.group({
@@ -22,7 +21,7 @@ export class LoginComponent implements OnInit, HasError {
         Validators.maxLength(validationConfigs.password.maxlength)]),
       rememberPassword: true
     });
-    this.hasError = hasError(this.loginForm);
+    this.hasError = createHasError(this.loginForm);
   }
 
   ngOnInit() {

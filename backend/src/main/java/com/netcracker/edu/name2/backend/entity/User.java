@@ -1,8 +1,6 @@
 package com.netcracker.edu.name2.backend.entity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class User {
@@ -17,11 +15,11 @@ public class User {
     @Column(nullable = false, length = 20)
     private String surname;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 30, unique = true)
     private String email;
 
     @Column(nullable = false, length = 128)
-    private String passwordHash;
+    private String password;
 
     @Column(length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
@@ -55,12 +53,16 @@ public class User {
         this.email = email;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public UserRole getRole() {
@@ -69,5 +71,17 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

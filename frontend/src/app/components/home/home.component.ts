@@ -3,6 +3,7 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {NewProjectComponent} from '../new-project/new-project.component';
 import {NewUserComponent} from '../new-user/new-user.component';
 import {NewTaskComponent} from '../new-task/new-task.component';
+import {User} from '../../models/user';
 
 @Component({
   selector: 'app-home',
@@ -22,16 +23,16 @@ export class HomeComponent implements OnInit {
     modalRef.result.then((result) => {
       console.log(result);
     }).catch((error) => {
-      console.log(error);
+      console.log('rejected ' + error);
     });
   }
 
   openNewUserModal() {
     const modalRef = this.modalService.open(NewUserComponent);
-    modalRef.result.then((result) => {
+    modalRef.result.then((result: User) => {
       console.log(result);
     }).catch((error) => {
-      console.log(error);
+      console.log('rejected ' + error);
     });
   }
 
@@ -40,7 +41,7 @@ export class HomeComponent implements OnInit {
     modalRef.result.then((result) => {
       console.log(result);
     }).catch((error) => {
-      console.log(error);
+      console.log('rejected ' + error);
     });
   }
 

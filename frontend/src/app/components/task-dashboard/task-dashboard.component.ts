@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {TaskPriority} from '../../models/TaskPriority';
-import {TaskStatus} from '../../models/TaskStatus';
+import {TaskPriority} from '../../models/task-priority';
+import {TaskStatus} from '../../models/task-status';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -76,7 +76,7 @@ export class TaskDashboardComponent implements OnInit {
   }
 
   enableEdit() {
-    if(this.isFormDisabled) {
+    if (this.isFormDisabled) {
       this.isFormDisabled = false;
       for (const controlName in this.taskForm.controls) {
         this.taskForm.get(controlName).enable();

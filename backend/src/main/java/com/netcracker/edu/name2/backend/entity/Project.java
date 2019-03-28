@@ -19,6 +19,10 @@ public class Project {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getCode() {
         return code;
     }
@@ -33,5 +37,14 @@ public class Project {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    @Override
+    public String toString() {
+        return "Project{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", summary='" + summary + '\'' +
+                '}';
     }
 }

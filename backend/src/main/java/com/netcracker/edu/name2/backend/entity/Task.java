@@ -11,8 +11,20 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(targetEntity = Project.class)
     private Project project;
+
+    @Column(length = 4, nullable = false)
+    private int code;
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 
     @Column(length = 200, nullable = false)
     private String description;
@@ -35,13 +47,42 @@ public class Task {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
+
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
     private Date estimation;
 
     @ManyToOne(targetEntity = User.class)
     private User assignee;
 
+    @NotNull
+    @ManyToOne(targetEntity = User.class)
+//    @JoinColumn(name = "reporter_id", referencedColumnName = "id", table = "user")
+    private User reporter;
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
+    public User getReporter() {
+        return reporter;
+    }
+
+    public void setReporter(User reporter) {
+        this.reporter = reporter;
+    }
+
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Project getProject() {
@@ -106,5 +147,23 @@ public class Task {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", project=" + project +
+                ", code=" + code +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", created=" + created +
+                ", dueDate=" + dueDate +
+                ", updated=" + updated +
+                ", estimation=" + estimation +
+                ", assignee=" + assignee +
+                ", reporter=" + reporter +
+                '}';
     }
 }

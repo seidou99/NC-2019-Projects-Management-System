@@ -2,10 +2,9 @@ package com.netcracker.edu.name2.backend.controller;
 
 import com.netcracker.edu.name2.backend.entity.User;
 import com.netcracker.edu.name2.backend.repository.UserRepository;
+import com.netcracker.edu.name2.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -13,11 +12,30 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    @GetMapping(value = "")
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public Iterable<User> findAllUsers() {
+        return userService.findAll();
+    }
+
+    @GetMapping(value = "/emails/{email}")
+    public User findUserByEmail(@PathVariable(name = "email") String email) {
+        return userService.findByEmail(email).get();
+    }
+
+    @GetMapping(value = "/{userId}")
+    public User findUserById(@PathVariable(name = "userId") Long userId) {
+        return userService.findById(userId).get();
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userService.save(user);
     }
 }

@@ -1,5 +1,5 @@
-import {TaskPriority} from './TaskPriority';
-import {TaskStatus} from './TaskStatus';
+import {TaskPriority} from './task-priority';
+import {TaskStatus} from './task-status';
 
 export class Task {
   projectId: number;
