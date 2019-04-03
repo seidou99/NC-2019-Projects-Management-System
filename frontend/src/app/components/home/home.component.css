@@ -1,24 +1,7 @@
-.btn-right-append {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
 tbody tr:hover, tbody tr:focus {
   cursor: pointer;
 }
 
-table thead th {
-  vertical-align: middle;
-}
-
 .table-wrapper {
   overflow-x: auto;
-}
-
-.input-group button:focus, .input-group input:focus {
-  z-index: 20;
-}
-
-input, input:focus {
-  border: none;
 }

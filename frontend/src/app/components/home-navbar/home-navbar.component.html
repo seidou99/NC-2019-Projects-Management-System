@@ -1,0 +1,19 @@
+<nav>
+  <div class="wrapper p-3">
+    <div class="d-flex justify-content-between flex-wrap">
+      <div class="buttons-container">
+        <button class="btn btn-outline-secondary" (click)="createProjectClick.emit()">New Project</button>
+        <button class="btn btn-outline-secondary" (click)="createTaskClick.emit()">New Task</button>
+        <button class="btn btn-outline-secondary" (click)="createUserClick.emit()">New User</button>
+      </div>
+      <form>
+        <div class="input-group">
+          <input type="text" class="form-control position-relative d-block" placeholder="Enter filter">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary btn-right-append position-relative" type="button">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>

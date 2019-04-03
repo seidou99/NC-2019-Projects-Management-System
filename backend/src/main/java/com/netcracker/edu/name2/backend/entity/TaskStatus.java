@@ -3,7 +3,7 @@ package com.netcracker.edu.name2.backend.entity;
 import javax.persistence.*;
 
 @Entity
-public class TaskPriority {
+public class TaskStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +30,7 @@ public class TaskPriority {
 
     @Override
     public String toString() {
-        return "TaskPriority{" +
+        return "TaskStatus{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';

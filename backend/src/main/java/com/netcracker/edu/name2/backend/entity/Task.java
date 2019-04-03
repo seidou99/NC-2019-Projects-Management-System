@@ -3,6 +3,8 @@ package com.netcracker.edu.name2.backend.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import com.netcracker.edu.name2.backend.entity.TaskPriority;
+
 
 @Entity
 public class Task {
@@ -29,13 +31,13 @@ public class Task {
     @Column(length = 200, nullable = false)
     private String description;
 
-    @Column(length = 20, nullable = false)
-    @Enumerated(value = EnumType.STRING)
+    @NotNull
+    @ManyToOne(targetEntity = TaskPriority.class)
     private TaskPriority priority;
 
-    @Column(length = 20, nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private TaksStatus status;
+    @NotNull
+    @ManyToOne(targetEntity = TaskStatus.class)
+    private TaskStatus status;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
@@ -109,11 +111,11 @@ public class Task {
         this.priority = priority;
     }
 
-    public TaksStatus getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(TaksStatus status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

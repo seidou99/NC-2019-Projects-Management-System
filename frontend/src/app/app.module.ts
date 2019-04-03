@@ -13,6 +13,8 @@ import {NewUserComponent} from './components/new-user/new-user.component';
 import {NewTaskComponent} from './components/new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import { TasksTableComponent } from './components/tasks-table/tasks-table.component';
+import { HomeNavbarComponent } from './components/home-navbar/home-navbar.component';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import {HttpClientModule} from '@angular/common/http';
     TaskDashboardComponent,
     NewProjectComponent,
     NewUserComponent,
-    NewTaskComponent
+    NewTaskComponent,
+    TasksTableComponent,
+    HomeNavbarComponent
   ],
   imports: [
     BrowserModule,

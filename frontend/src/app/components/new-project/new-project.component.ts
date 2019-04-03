@@ -3,6 +3,8 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {validationConfigs} from '../../configs/conf';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
+import {Project} from '../../models/project';
+import {ProjectService} from '../../services/project.service';
 
 @Component({
   selector: 'app-new-project',
@@ -15,7 +17,7 @@ export class NewProjectComponent implements OnInit {
   validationConfigs = validationConfigs;
   hasError: HasErrorFunction;
 
-  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
+  constructor(private projectService: ProjectService, public activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
     this.newProjectForm = this.formBuilder.group({
       code: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.projectCode.minlength),
         Validators.maxLength(validationConfigs.projectCode.maxlength)]),
@@ -29,6 +31,8 @@ export class NewProjectComponent implements OnInit {
   }
 
   submitForm() {
-    this.activeModal.close(this.newProjectForm.value);
+    const formValue = this.newProjectForm.value;
+    const project = new Project(formValue.code, formValue.summary);
+    this.activeModal.close(project);
   }
 }

@@ -25,6 +25,8 @@ export const validationConfigs = {
   }
 };
 
-const serverURI = 'localhost:8081';
-
-export const usersURI = serverURI + '/api/users';
+const serverURI = 'http://localhost:8081';
+const apiURI = serverURI + '/api';
+export const usersURI = apiURI + '/users';
+export const tasksURI = apiURI + '/tasks';
+export const projectsURI = apiURI + '/projects';

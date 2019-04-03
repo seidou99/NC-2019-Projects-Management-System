@@ -36,3 +36,14 @@ nav {
 .vh-100 {
   height: 100vh;
 }
+
+ngb-typeahead-window.dropdown-menu {
+  display: block;
+  overflow-y: auto;
+  max-height: 250px;
+  width: calc(100% - 30px);
+}
+
+.input-group button:focus, .input-group input:focus {
+  z-index: 20;
+}

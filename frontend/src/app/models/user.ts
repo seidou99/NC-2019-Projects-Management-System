@@ -8,8 +8,6 @@ export class User {
   password: string;
   role: UserRole;
 
-
-
   constructor(name: string, surname: string, email: string, password: string, role: UserRole) {
     this.name = name;
     this.surname = surname;

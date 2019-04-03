@@ -1,6 +1,7 @@
 package com.netcracker.edu.name2.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class User {
@@ -15,15 +16,25 @@ public class User {
     @Column(nullable = false, length = 20)
     private String surname;
 
-    @Column(nullable = false, length = 30, unique = true)
-    private String email;
-
-    @Column(nullable = false, length = 128)
-    private String password;
-
-    @Column(length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
+    @NotNull
+    @ManyToOne(targetEntity = UserRole.class)
     private UserRole role;
+
+    @NotNull
+    @OneToOne(targetEntity = UserAuthData.class)
+    private UserAuthData authData;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UserAuthData getAuthData() {
+        return authData;
+    }
+
+    public void setAuthData(UserAuthData authData) {
+        this.authData = authData;
+    }
 
     public Long getId() {
         return id;
@@ -45,26 +56,6 @@ public class User {
         this.surname = surname;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public UserRole getRole() {
         return role;
     }
@@ -79,9 +70,8 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
                 ", role=" + role +
+                ", authData=" + authData +
                 '}';
     }
 }

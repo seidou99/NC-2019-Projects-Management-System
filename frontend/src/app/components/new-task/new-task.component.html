@@ -7,10 +7,13 @@
 <form [formGroup]="newTaskForm" (ngSubmit)="submitForm()">
   <div class="modal-body">
     <div class="container">
+
       <div class="form-group">
         <label>Project code</label>
-        <input type="text" class="form-control" formControlName="projectCode">
-        <div class="alert alert-danger mt-2" *ngIf="hasError('projectCode', 'required')">
+        <input type="text" class="form-control" [ngbTypeahead]="search" formControlName="code"
+               (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)"
+               #instance="ngbTypeahead">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'required')">
           Project code is required
         </div>
       </div>
@@ -18,11 +21,25 @@
       <div class="form-group">
         <label>Description</label>
         <input type="text" class="form-control" formControlName="description">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'required')">
+          Task description is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'minlength')">
+          Task description length must be {{validationConfigs.taskDescription.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'maxlength')">
+          Taks description length must be {{validationConfigs.taskDescription.maxlength}} symbols length or less
+        </div>
       </div>
 
       <div class="form-group">
         <label>Priority</label>
-        <input type="text" class="form-control" formControlName="priority">
+        <select class="form-control" formControlName="priority">
+          <option *ngFor="let priority of taskPriorities">{{priority}}</option>
+        </select>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('priority', 'required')">
+          Task priority is required
+        </div>
       </div>
 
       <div class="form-group">
