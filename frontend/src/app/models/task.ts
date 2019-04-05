@@ -5,15 +5,26 @@ import {Project} from './project';
 
 export class Task {
   id: number;
-  code: string;
-  priority: TaskPriority;
+  project: Project;
+  code: number;
+  description: string;
+  priority: { name: TaskPriority };
   status: TaskStatus;
   created: Date;
-  updated: Date;
   dueDate: Date;
+  updated: Date;
   estimation: number;
   logWork: number;
-  description: string;
   assignee: User;
-  project: Project;
+  reporter: User;
+  comments: Comment[];
+
+  constructor(project: Project, description: string, priority: TaskPriority, dueDate: Date, estimation: number, assignee: User) {
+    this.project = project;
+    this.description = description;
+    this.priority = {name: priority};
+    this.dueDate = dueDate;
+    this.estimation = estimation;
+    this.assignee = assignee;
+  }
 }

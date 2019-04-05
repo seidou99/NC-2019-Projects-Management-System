@@ -10,11 +10,14 @@
 
       <div class="form-group">
         <label>Project code</label>
-        <input type="text" class="form-control" [ngbTypeahead]="search" formControlName="code"
-               (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)"
-               #instance="ngbTypeahead">
+        <input type="text" class="form-control" [ngbTypeahead]="projectCodeSearch" formControlName="code"
+               (focus)="codeFocus$.next($event.target.value)" (click)="codeClick$.next($event.target.value)"
+               #codeTypeahead="ngbTypeahead">
         <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'required')">
           Project code is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'valueContains')">
+          Wrong project code value
         </div>
       </div>
 
@@ -37,25 +40,37 @@
         <select class="form-control" formControlName="priority">
           <option *ngFor="let priority of taskPriorities">{{priority}}</option>
         </select>
-        <div class="alert alert-danger mt-2" *ngIf="hasError('priority', 'required')">
-          Task priority is required
+      </div>
+
+      <div class="form-group">
+        <label>Assignee</label>
+        <input type="text" class="form-control" [ngbTypeahead]="assigneeSearch" formControlName="assignee"
+               (focus)="assigneeFocus$.next($event.target.value)" (click)="assigneeClick$.next($event.target.value)"
+               #assigneeTypeahead="ngbTypeahead">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('assignee', 'valueContains')">
+          Wrong assignee value
         </div>
       </div>
 
       <div class="form-group">
         <label>Due Date</label>
-        <input type="text" class="form-control" formControlName="dueDate">
+        <input type="date" class="form-control" formControlName="dueDate">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'required')">
+          Due date is required
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Estimation</label>
-        <input type="text" class="form-control" formControlName="estimation">
+        <label>Estimation (in hours)</label>
+        <input type="number" class="form-control" formControlName="estimation">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('estimation', 'required')">
+          Estimation is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('estimation', 'min')">
+          Estimation must be {{validationConfigs.estimation.min}} hour(s) or more
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>Assignee</label>
-        <input type="text" class="form-control" formControlName="assignee">
-      </div>
     </div>
   </div>
   <div class="modal-footer">

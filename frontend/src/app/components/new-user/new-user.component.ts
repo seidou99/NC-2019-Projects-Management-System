@@ -16,7 +16,6 @@ export class NewUserComponent {
   newUserForm: FormGroup;
   availableRoles = [];
   validationConfigs = validationConfigs;
-  isPasswordConfirmed = true;
   hasError: HasErrorFunction;
 
   constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
@@ -37,22 +36,28 @@ export class NewUserComponent {
       role: new FormControl(this.availableRoles[0], [Validators.required])
     });
     this.hasError = createHasError(this.newUserForm);
+    this.newUserForm.get('passwordConfirmation').setValidators(this.passwordConfirmation());
   }
 
   passwordConfirmation() {
     const password = this.newUserForm.get('password');
     const passwordConfirmation = this.newUserForm.get('passwordConfirmation');
-    if (passwordConfirmation.value !== password.value && (password.dirty || password.touched)
-      && (passwordConfirmation.dirty || passwordConfirmation.touched)) {
-      this.isPasswordConfirmed = false;
-    } else {
-      this.isPasswordConfirmed = true;
-    }
+    return () => {
+      if (password.value === passwordConfirmation.value) {
+        return null;
+      } else {
+        return {confirmation: true};
+      }
+    };
+  }
+
+  updatePasswordConfirmationValidity() {
+    this.newUserForm.get('passwordConfirmation').updateValueAndValidity();
   }
 
   submitForm() {
     const formValue = this.newUserForm.value;
-    const user = new User(formValue.name, formValue.surname, formValue.email, formValue.password, formValue.role);
+    const user = new User(formValue.name, formValue.surname, formValue.role, formValue.email, formValue.password);
     this.activeModal.close(user);
   }
 

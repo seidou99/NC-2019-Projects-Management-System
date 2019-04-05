@@ -2,9 +2,12 @@ package com.netcracker.edu.name2.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
-import com.netcracker.edu.name2.backend.entity.TaskPriority;
+import java.util.List;
+import java.util.Objects;
 
+import com.netcracker.edu.name2.backend.entity.TaskPriority;
 
 @Entity
 public class Task {
@@ -19,14 +22,6 @@ public class Task {
 
     @Column(length = 4, nullable = false)
     private int code;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     @Column(length = 200, nullable = false)
     private String description;
@@ -44,7 +39,7 @@ public class Task {
     private Date created;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date dueDate;
 
     @NotNull
@@ -52,16 +47,28 @@ public class Task {
     private Date updated;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date estimation;
+    private int estimation;
+
+    @NotNull
+    private int logWork;
 
     @ManyToOne(targetEntity = User.class)
     private User assignee;
 
     @NotNull
     @ManyToOne(targetEntity = User.class)
-//    @JoinColumn(name = "reporter_id", referencedColumnName = "id", table = "user")
     private User reporter;
+
+    @OneToMany(targetEntity = Comment.class)
+    private List<Comment> comments = new ArrayList<>();
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 
     public Date getUpdated() {
         return updated;
@@ -127,11 +134,11 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public Date getEstimation() {
+    public int getEstimation() {
         return estimation;
     }
 
-    public void setEstimation(Date estimation) {
+    public void setEstimation(int estimation) {
         this.estimation = estimation;
     }
 
@@ -151,6 +158,48 @@ public class Task {
         this.created = created;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public int getLogWork() {
+        return logWork;
+    }
+
+    public void setLogWork(int logWork) {
+        this.logWork = logWork;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task)) return false;
+        Task task = (Task) o;
+        return code == task.code &&
+                estimation == task.estimation &&
+                logWork == task.logWork &&
+                Objects.equals(id, task.id) &&
+                Objects.equals(project, task.project) &&
+                Objects.equals(description, task.description) &&
+                Objects.equals(priority, task.priority) &&
+                Objects.equals(status, task.status) &&
+                Objects.equals(created, task.created) &&
+                Objects.equals(dueDate, task.dueDate) &&
+                Objects.equals(updated, task.updated) &&
+                Objects.equals(assignee, task.assignee) &&
+                Objects.equals(reporter, task.reporter) &&
+                Objects.equals(comments, task.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, project, code, description, priority, status, created, dueDate, updated, estimation, logWork, assignee, reporter, comments);
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -164,8 +213,10 @@ public class Task {
                 ", dueDate=" + dueDate +
                 ", updated=" + updated +
                 ", estimation=" + estimation +
+                ", logWork=" + logWork +
                 ", assignee=" + assignee +
                 ", reporter=" + reporter +
+                ", comments=" + comments +
                 '}';
     }
 }

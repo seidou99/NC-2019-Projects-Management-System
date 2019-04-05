@@ -1,17 +1,4 @@
-<nav>
-  <div class="wrapper p-3">
-    <h3 class="text-white">Description</h3>
-    <div class="mt-3 buttons-container d-flex flex-wrap justify-content-between">
-      <button class="btn btn-outline-secondary" (click)="enableEdit()">Edit</button>
-      <button class="btn btn-outline-secondary">Assign</button>
-      <button class="btn btn-outline-secondary">Start</button>
-      <button class="btn btn-outline-secondary">Resolve</button>
-      <button class="btn btn-outline-secondary">Ready for test</button>
-      <button class="btn btn-outline-secondary">ReOpen</button>
-      <button class="btn btn-outline-secondary">Close</button>
-    </div>
-  </div>
-</nav>
+<app-task-dashboard-navbar (editClick)="onEditClick()"></app-task-dashboard-navbar>
 
 <div class="wrapper p-3">
   <div class="container-fluid p-0">
@@ -114,17 +101,6 @@
       </div>
       <button class="btn btn-outline-success" type="submit" [disabled]="isFormDisabled">Update</button>
     </form>
-    <!--comments-->
-    <h3 class="mt-5">Comments</h3>
-    <div *ngFor="let comment of comments" class="mt-3 comment-border p-2">
-      <p>{{comment.name}} {{comment.surname}}</p>
-      <p>{{comment.text}}</p>
-    </div>
-    <form [formGroup]="commentForm" (ngSubmit)="submitComment()">
-      <div class="form-group mt-4">
-        <textarea class="form-control" formControlName="text"></textarea>
-      </div>
-      <button class="btn btn-outline-success" type="submit">Comment</button>
-    </form>
+    <app-task-dashboard-comments></app-task-dashboard-comments>
   </div>
 </div>

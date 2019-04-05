@@ -22,6 +22,9 @@ export const validationConfigs = {
   taskDescription: {
     minlength: 10,
     maxlength: 200
+  },
+  estimation: {
+    min: 1
   }
 };
 

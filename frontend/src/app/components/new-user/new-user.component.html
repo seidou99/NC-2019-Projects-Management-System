@@ -18,7 +18,8 @@
         </div>
 
         <label>Password</label>
-        <input type="password" class="form-control" formControlName="password" (keyup)="passwordConfirmation()">
+        <input type="password" class="form-control" formControlName="password"
+               (keyup)="updatePasswordConfirmationValidity()">
         <div class="alert alert-danger mt-2" *ngIf="hasError('password', 'required')">
           Password is required
         </div>
@@ -30,11 +31,12 @@
         </div>
 
         <label>Password confirmation</label>
-        <input type="password" class="form-control" formControlName="passwordConfirmation" (keyup)="passwordConfirmation()">
+        <input type="password" class="form-control" formControlName="passwordConfirmation">
         <div class="alert alert-danger mt-2" *ngIf="hasError('passwordConfirmation', 'required')">
           Password confirmation is required
         </div>
-        <div class="alert alert-danger mt-2" *ngIf="!isPasswordConfirmed && !hasError('passwordConfirmation', 'required')">
+        <div class="alert alert-danger mt-2"
+             *ngIf="hasError('passwordConfirmation', 'confirmation') && !hasError('passwordConfirmation', 'required')">
           Passwords don't match
         </div>
 
@@ -73,7 +75,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" [disabled]="!newUserForm.valid && isPasswordConfirmed">Create</button>
+    <button class="btn btn-success" [disabled]="!newUserForm.valid">Create</button>
   </div>
 </form>
 

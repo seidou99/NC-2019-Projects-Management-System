@@ -17,24 +17,6 @@ export class TaskDashboardComponent implements OnInit {
   availablePriority = [];
   isFormDisabled = true;
 
-  comments = [
-    {
-      name: 'Name',
-      surname: 'Surname',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    },
-    {
-      name: 'Name',
-      surname: 'Surname',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    },
-    {
-      name: 'Name',
-      surname: 'Surname',
-      text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    },
-  ];
-
   currentDate() {
     const currentDate = new Date();
     return currentDate.toISOString().substring(0, 10);
@@ -75,7 +57,7 @@ export class TaskDashboardComponent implements OnInit {
     console.log(this.taskForm.value);
   }
 
-  enableEdit() {
+  onEditClick() {
     if (this.isFormDisabled) {
       this.isFormDisabled = false;
       for (const controlName in this.taskForm.controls) {

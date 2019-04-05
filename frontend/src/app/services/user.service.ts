@@ -16,9 +16,6 @@ export class UserService {
   }
 
   createUser(user: User): Observable<User> {
-    prepareEnumForServer(user, 'role', UserRole);
-    return this.http.post<User>(usersURI, user).pipe(
-      map(processEnumFromServer('role', UserRole))
-    );
+    return this.http.post<User>(usersURI, user);
   }
 }

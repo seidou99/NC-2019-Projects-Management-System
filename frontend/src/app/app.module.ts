@@ -15,6 +15,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { TasksTableComponent } from './components/tasks-table/tasks-table.component';
 import { HomeNavbarComponent } from './components/home-navbar/home-navbar.component';
+import { TaskDashboardNavbarComponent } from './components/task-dashboard-navbar/task-dashboard-navbar.component';
+import { TaskDashboardCommentsComponent } from './components/task-dashboard-comments/task-dashboard-comments.component';
 
 
 @NgModule({
@@ -27,7 +29,9 @@ import { HomeNavbarComponent } from './components/home-navbar/home-navbar.compon
     NewUserComponent,
     NewTaskComponent,
     TasksTableComponent,
-    HomeNavbarComponent
+    HomeNavbarComponent,
+    TaskDashboardNavbarComponent,
+    TaskDashboardCommentsComponent
   ],
   imports: [
     BrowserModule,

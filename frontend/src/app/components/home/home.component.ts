@@ -8,6 +8,7 @@ import {UserService} from '../../services/user.service';
 import {Project} from '../../models/project';
 import {ProjectService} from '../../services/project.service';
 import {Router} from '@angular/router';
+import {Task} from '../../models/task';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,8 @@ import {Router} from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService, private router: Router) {
+  constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class HomeComponent implements OnInit {
           console.log(e);
         }
       );
+      // console.log(project);
     }).catch((e) => {
       console.log('rejected ' + e);
     });
@@ -46,6 +49,7 @@ export class HomeComponent implements OnInit {
   openNewUserModal() {
     const modalRef = this.modalService.open(NewUserComponent);
     modalRef.result.then((user: User) => {
+      // console.log(user);
       this.userService.createUser(user).subscribe(
         (data: User) => {
           console.log('returned from server ' + JSON.stringify(data));
@@ -61,8 +65,8 @@ export class HomeComponent implements OnInit {
 
   openNewTaskModal() {
     const modalRef = this.modalService.open(NewTaskComponent);
-    modalRef.result.then((result) => {
-      console.log(result);
+    modalRef.result.then((task: Task) => {
+      console.log(task);
     }).catch((e) => {
       console.log('rejected ' + e);
     });
