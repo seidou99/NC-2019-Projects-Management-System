@@ -5,11 +5,12 @@ import com.netcracker.edu.name2.backend.repository.ProjectRepository;
 import com.netcracker.edu.name2.backend.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Component
+@Service
 public class ProjectServiceImpl implements ProjectService {
 
     private ProjectRepository repo;

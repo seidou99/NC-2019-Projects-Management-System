@@ -1,6 +1,7 @@
 package com.netcracker.edu.name2.backend.controller;
 
 import com.netcracker.edu.name2.backend.entity.Task;
+import com.netcracker.edu.name2.backend.repository.TaskRepository;
 import com.netcracker.edu.name2.backend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,16 @@ public class TaskController {
 
     @PostMapping
     public Task createTask(@RequestBody Task task) {
+        System.out.println(task);
         return taskService.save(task);
+    }
+
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @GetMapping(value = "/amount")
+    public Long getAmount() {
+        return taskRepository.countTasksWithProjectId(1L);
     }
 
     @GetMapping(value = "/{taskId}")

@@ -11,6 +11,7 @@ import {UserRole} from '../../models/user-role';
 import {TaskPriority} from '../../models/task-priority';
 import {User} from '../../models/user';
 import {Task} from '../../models/task';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-new-task',
@@ -32,11 +33,10 @@ export class NewTaskComponent implements OnInit {
   taskPriorities: string[] = [];
   projectCodeSearch;
   assigneeSearch;
-  developers: User[] = [new User('biba', 's', UserRole.DEVELOPER, 'biba@gmail.com', '123'),
-    new User('boba', 's', UserRole.DEVELOPER, 'boba@gmail.com', '123')];
+  developers: User[] = [];
 
-
-  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private projectService: ProjectService) {
+  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private projectService: ProjectService,
+              private userService: UserService) {
     for (const priority in TaskPriority) {
       this.taskPriorities.push(TaskPriority[priority]);
     }
@@ -67,6 +67,9 @@ export class NewTaskComponent implements OnInit {
         console.log(e);
       }
     );
+    this.userService.getAllUsersByRole(UserRole.DEVELOPER).subscribe((data: User[]) => {
+      data.forEach((u: User) => this.developers.push(u));
+    }, (e) => console.log(e));
     this.projectCodeSearch = this.search<Project>(this.codeTypeahead, this.codeFocus$, this.codeClick$, this.projects, this.projectMapper);
     this.assigneeSearch = this.search<User>(this.assigneeTypeahead, this.assigneeFocus$, this.assigneeClick$,
       this.developers, this.developerMapper);
@@ -112,15 +115,6 @@ export class NewTaskComponent implements OnInit {
       );
     };
   }
-
-  // Object
-  // assignee: "s boba (boba@gmail.com)"
-  // code: "1488"
-  // description: "быоовидыврадфырва"
-  // dueDate: "2019-04-12"
-  // estimation: 1
-  // priority: "Blocker"
-  // __proto__: Object
 
   submitForm() {
     const formValue = this.newTaskForm.getRawValue();

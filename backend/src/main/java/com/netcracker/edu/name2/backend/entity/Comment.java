@@ -18,6 +18,9 @@ public class Comment {
     @Column(nullable = false)
     private String text;
 
+    @ManyToOne(targetEntity = Task.class, fetch = FetchType.LAZY)
+    private Task task;
+
     public Long getId() {
         return id;
     }
@@ -42,6 +45,14 @@ public class Comment {
         this.text = text;
     }
 
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,13 +60,15 @@ public class Comment {
         Comment comment = (Comment) o;
         return Objects.equals(id, comment.id) &&
                 Objects.equals(author, comment.author) &&
-                Objects.equals(text, comment.text);
+                Objects.equals(text, comment.text) &&
+                Objects.equals(task, comment.task);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, author, text);
+        return Objects.hash(id, author, text, task);
     }
+
 
     @Override
     public String toString() {
@@ -63,6 +76,7 @@ public class Comment {
                 "id=" + id +
                 ", author=" + author +
                 ", text='" + text + '\'' +
+                ", task=" + task +
                 '}';
     }
 }

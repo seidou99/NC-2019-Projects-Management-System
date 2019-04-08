@@ -13,10 +13,10 @@
         <input type="text" class="form-control" [ngbTypeahead]="projectCodeSearch" formControlName="code"
                (focus)="codeFocus$.next($event.target.value)" (click)="codeClick$.next($event.target.value)"
                #codeTypeahead="ngbTypeahead">
-        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'required')">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'required') && !codeTypeahead.isPopupOpen()">
           Project code is required
         </div>
-        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'valueContains')">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('code', 'valueContains') && !codeTypeahead.isPopupOpen()">
           Wrong project code value
         </div>
       </div>
@@ -47,7 +47,7 @@
         <input type="text" class="form-control" [ngbTypeahead]="assigneeSearch" formControlName="assignee"
                (focus)="assigneeFocus$.next($event.target.value)" (click)="assigneeClick$.next($event.target.value)"
                #assigneeTypeahead="ngbTypeahead">
-        <div class="alert alert-danger mt-2" *ngIf="hasError('assignee', 'valueContains')">
+        <div class="alert alert-danger mt-2" *ngIf="hasError('assignee', 'valueContains') && !assigneeTypeahead.isPopupOpen()">
           Wrong assignee value
         </div>
       </div>

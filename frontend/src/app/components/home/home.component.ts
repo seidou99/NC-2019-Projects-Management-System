@@ -9,6 +9,7 @@ import {Project} from '../../models/project';
 import {ProjectService} from '../../services/project.service';
 import {Router} from '@angular/router';
 import {Task} from '../../models/task';
+import {TaskService} from '../../services/task.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,7 @@ import {Task} from '../../models/task';
 export class HomeComponent implements OnInit {
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
-              private router: Router) {
+              private router: Router, private taskService: TaskService) {
   }
 
   ngOnInit() {
@@ -67,6 +68,8 @@ export class HomeComponent implements OnInit {
     const modalRef = this.modalService.open(NewTaskComponent);
     modalRef.result.then((task: Task) => {
       console.log(task);
+      this.taskService.createTask(task).subscribe((data) => console.log(data),
+        e => console.log(e));
     }).catch((e) => {
       console.log('rejected ' + e);
     });

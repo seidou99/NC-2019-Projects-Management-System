@@ -6,18 +6,22 @@ import {Observable} from 'rxjs';
 import {prepareEnumForServer, processEnumFromServer} from '../util/process-enum';
 import {TaskPriority} from '../models/task-priority';
 import {TaskStatus} from '../models/task-status';
+import {User} from '../models/user';
+import {AuthService} from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private auth: AuthService) {
   }
 
   createTask(task: Task): Observable<Task> {
-    // prepareEnumForServer(task, 'taskPriority', TaskPriority);
-    // prepareEnumForServer(task, 'taskStatus', TaskStatus);
+    task.reporter = this.auth.getUser();
+    if (!task.assignee) {
+      task.assignee = task.reporter;
+    }
     return this.http.post<Task>(tasksURI, task);
   }
 

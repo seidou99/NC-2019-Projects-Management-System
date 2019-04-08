@@ -18,4 +18,10 @@ export class UserService {
   createUser(user: User): Observable<User> {
     return this.http.post<User>(usersURI, user);
   }
+
+  getAllUsersByRole(role: UserRole): Observable<User[]> {
+    return this.http.get<User[]>(usersURI).pipe(
+      map((v: User[]) => v.filter((u: User) => u.role.name === role))
+    );
+  }
 }

@@ -20,8 +20,8 @@ public class Task {
     @ManyToOne(targetEntity = Project.class)
     private Project project;
 
-    @Column(length = 4, nullable = false)
-    private int code;
+    @Column(nullable = false)
+    private Long code;
 
     @Column(length = 200, nullable = false)
     private String description;
@@ -42,14 +42,12 @@ public class Task {
     @Temporal(TemporalType.DATE)
     private Date dueDate;
 
-    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
 
     @NotNull
     private int estimation;
 
-    @NotNull
     private int logWork;
 
     @ManyToOne(targetEntity = User.class)
@@ -59,14 +57,11 @@ public class Task {
     @ManyToOne(targetEntity = User.class)
     private User reporter;
 
-    @OneToMany(targetEntity = Comment.class)
-    private List<Comment> comments = new ArrayList<>();
-
-    public int getCode() {
+    public Long getCode() {
         return code;
     }
 
-    public void setCode(int code) {
+    public void setCode(Long code) {
         this.code = code;
     }
 
@@ -158,14 +153,6 @@ public class Task {
         this.created = created;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
     public int getLogWork() {
         return logWork;
     }
@@ -191,13 +178,12 @@ public class Task {
                 Objects.equals(dueDate, task.dueDate) &&
                 Objects.equals(updated, task.updated) &&
                 Objects.equals(assignee, task.assignee) &&
-                Objects.equals(reporter, task.reporter) &&
-                Objects.equals(comments, task.comments);
+                Objects.equals(reporter, task.reporter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, project, code, description, priority, status, created, dueDate, updated, estimation, logWork, assignee, reporter, comments);
+        return Objects.hash(id, project, code, description, priority, status, created, dueDate, updated, estimation, logWork, assignee, reporter);
     }
 
     @Override
@@ -216,7 +202,6 @@ public class Task {
                 ", logWork=" + logWork +
                 ", assignee=" + assignee +
                 ", reporter=" + reporter +
-                ", comments=" + comments +
                 '}';
     }
 }

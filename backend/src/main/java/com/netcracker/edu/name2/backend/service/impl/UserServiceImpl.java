@@ -9,10 +9,11 @@ import com.netcracker.edu.name2.backend.repository.UserRoleRepository;
 import com.netcracker.edu.name2.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
