@@ -5,7 +5,6 @@ import {User} from '../models/user';
 import {Observable} from 'rxjs';
 import {UserRole} from '../models/user-role';
 import {map} from 'rxjs/operators';
-import {prepareEnumForServer, processEnumFromServer} from '../util/process-enum';
 
 @Injectable({
   providedIn: 'root'

@@ -9,7 +9,7 @@ export class Task {
   code: number;
   description: string;
   priority: { name: TaskPriority };
-  status: TaskStatus;
+  status: { name: TaskStatus };
   created: Date;
   dueDate: Date;
   updated: Date;
@@ -17,7 +17,6 @@ export class Task {
   logWork: number;
   assignee: User;
   reporter: User;
-  comments: Comment[];
 
   constructor(project: Project, description: string, priority: TaskPriority, dueDate: Date, estimation: number, assignee: User) {
     this.project = project;

@@ -18,11 +18,14 @@ import {TaskService} from '../../services/task.service';
 })
 export class HomeComponent implements OnInit {
 
+  tasks: Task[] = [];
+
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
               private router: Router, private taskService: TaskService) {
   }
 
   ngOnInit() {
+    this.taskService.getAllTasks().subscribe((data) => this.tasks = data, (e) => console.log(e));
   }
 
   openNewProjectModal() {
@@ -68,7 +71,10 @@ export class HomeComponent implements OnInit {
     const modalRef = this.modalService.open(NewTaskComponent);
     modalRef.result.then((task: Task) => {
       console.log(task);
-      this.taskService.createTask(task).subscribe((data) => console.log(data),
+      this.taskService.createTask(task).subscribe((data) => {
+          console.log(data);
+          this.taskService.getAllTasks().subscribe((tasks: Task[]) => this.tasks = tasks);
+        },
         e => console.log(e));
     }).catch((e) => {
       console.log('rejected ' + e);

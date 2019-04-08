@@ -3,6 +3,6 @@
 
 <div class="wrapper p-3 mt-5">
   <div class="table-wrapper">
-    <app-tasks-table (taskRowClick)="onTaskRowClick($event)"></app-tasks-table>
+    <app-tasks-table (taskRowClick)="onTaskRowClick($event)" [tasks]="tasks"></app-tasks-table>
   </div>
 </div>

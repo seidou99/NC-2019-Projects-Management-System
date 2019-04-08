@@ -8,6 +8,7 @@ import {TaskPriority} from '../models/task-priority';
 import {TaskStatus} from '../models/task-status';
 import {User} from '../models/user';
 import {AuthService} from './auth.service';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,17 @@ export class TaskService {
   }
 
   getAllTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(tasksURI);
+    return this.http.get<Task[]>(tasksURI).pipe(
+      map((tasks: Task[]) => {
+        tasks.forEach((task: Task) => {
+          task.created = new Date(task.created);
+          task.dueDate = new Date(task.dueDate);
+          if (task.updated) {
+            task.updated = new Date(task.updated);
+          }
+        });
+        return tasks;
+      })
+    );
   }
 }

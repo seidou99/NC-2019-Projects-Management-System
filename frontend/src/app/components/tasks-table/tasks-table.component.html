@@ -1,4 +1,4 @@
-<table class="table table-hover">
+<table class="table table-hover table-bordered">
   <thead>
   <tr>
     <th>Project code</th>
@@ -8,25 +8,23 @@
     <th>Created</th>
     <th>Updated</th>
     <th>Due date</th>
-    <th>Estimation</th>
+    <th>Estimation in hour(s)</th>
     <th>Assignee</th>
     <th>Description</th>
-    <th>Action</th>
   </tr>
   </thead>
   <tbody>
-  <tr (click)="taskRowClick.emit(1)">
-    <td>CODE</td>
-    <td>TASK</td>
-    <td>PRIORITY</td>
-    <td>STATUS</td>
-    <td>CREATED</td>
-    <td>UPDATED</td>
-    <td>16.03.2019</td>
-    <td>18.03.2019</td>
-    <td>ASSIGNEE</td>
-    <td>DESCRIPTION</td>
-    <td>ACTION</td>
+  <tr *ngFor="let task of tasks" (click)="taskRowClick.emit(task.id)">
+    <td>{{task.project.code}}</td>
+    <td class="nowrap">{{task.project.code}}-{{task.code}}</td>
+    <td>{{task.priority.name}}</td>
+    <td>{{task.status.name}}</td>
+    <td>{{task.created | date}}</td>
+    <td>{{task.updated ? task.updated : '' | date}}</td>
+    <td>{{task.dueDate | date}}</td>
+    <td>{{task.estimation}}</td>
+    <td>{{task.assignee.surname + ' ' + task.assignee.name}}</td>
+    <td>{{task.description}}</td>
   </tr>
   </tbody>
 </table>

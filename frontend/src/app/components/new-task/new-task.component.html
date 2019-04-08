@@ -62,7 +62,7 @@
 
       <div class="form-group">
         <label>Estimation (in hours)</label>
-        <input type="number" class="form-control" formControlName="estimation">
+        <input type="number" class="form-control" formControlName="estimation" min="{{validationConfigs.estimation.min}}">
         <div class="alert alert-danger mt-2" *ngIf="hasError('estimation', 'required')">
           Estimation is required
         </div>

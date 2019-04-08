@@ -1,7 +1,12 @@
-table thead th {
+th, td {
   vertical-align: middle;
+  text-align: center;
 }
 
 tbody tr {
   cursor: pointer;
+}
+
+.nowrap {
+  white-space: nowrap;
 }
