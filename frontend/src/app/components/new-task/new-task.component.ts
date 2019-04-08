@@ -12,6 +12,8 @@ import {TaskPriority} from '../../models/task-priority';
 import {User} from '../../models/user';
 import {Task} from '../../models/task';
 import {UserService} from '../../services/user.service';
+import {DatePipe} from '@angular/common';
+import {transformDate, getNextDay, minDateValidator} from '../../util/date-util';
 
 @Component({
   selector: 'app-new-task',
@@ -34,9 +36,10 @@ export class NewTaskComponent implements OnInit {
   projectCodeSearch;
   assigneeSearch;
   developers: User[] = [];
+  minDueDate: string = transformDate(getNextDay());
 
   constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private projectService: ProjectService,
-              private userService: UserService) {
+              private userService: UserService, private datePipe: DatePipe) {
     for (const priority in TaskPriority) {
       this.taskPriorities.push(TaskPriority[priority]);
     }
@@ -47,7 +50,7 @@ export class NewTaskComponent implements OnInit {
       description: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.taskDescription.minlength),
         Validators.maxLength(validationConfigs.taskDescription.maxlength)]),
       priority: new FormControl(this.taskPriorities[0], [Validators.required]),
-      dueDate: new FormControl('', [Validators.required]),
+      dueDate: new FormControl(this.minDueDate, [Validators.required, minDateValidator(getNextDay())]),
       estimation: new FormControl(validationConfigs.estimation.min, [Validators.required,
         Validators.min(validationConfigs.estimation.min)]),
       assignee: new FormControl('', {

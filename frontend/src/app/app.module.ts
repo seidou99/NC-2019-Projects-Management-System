@@ -13,10 +13,11 @@ import {NewUserComponent} from './components/new-user/new-user.component';
 import {NewTaskComponent} from './components/new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
-import { TasksTableComponent } from './components/tasks-table/tasks-table.component';
-import { HomeNavbarComponent } from './components/home-navbar/home-navbar.component';
-import { TaskDashboardNavbarComponent } from './components/task-dashboard-navbar/task-dashboard-navbar.component';
-import { TaskDashboardCommentsComponent } from './components/task-dashboard-comments/task-dashboard-comments.component';
+import {TasksTableComponent} from './components/tasks-table/tasks-table.component';
+import {HomeNavbarComponent} from './components/home-navbar/home-navbar.component';
+import {TaskDashboardNavbarComponent} from './components/task-dashboard-navbar/task-dashboard-navbar.component';
+import {TaskDashboardCommentsComponent} from './components/task-dashboard-comments/task-dashboard-comments.component';
+import {DatePipe} from '@angular/common';
 
 
 @NgModule({
@@ -42,7 +43,9 @@ import { TaskDashboardCommentsComponent } from './components/task-dashboard-comm
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    DatePipe
+  ],
   entryComponents: [
     NewProjectComponent,
     NewTaskComponent,

@@ -3,10 +3,6 @@ import {HttpClient} from '@angular/common/http';
 import {Task} from '../models/task';
 import {tasksURI} from '../configs/conf';
 import {Observable} from 'rxjs';
-import {prepareEnumForServer, processEnumFromServer} from '../util/process-enum';
-import {TaskPriority} from '../models/task-priority';
-import {TaskStatus} from '../models/task-status';
-import {User} from '../models/user';
 import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';
 

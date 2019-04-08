@@ -54,9 +54,12 @@
 
       <div class="form-group">
         <label>Due Date</label>
-        <input type="date" class="form-control" formControlName="dueDate">
+        <input type="date" class="form-control" formControlName="dueDate" min="{{minDueDate}}">
         <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'required')">
           Due date is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'minDate')">
+          Min date is {{minDueDate}}
         </div>
       </div>
 
