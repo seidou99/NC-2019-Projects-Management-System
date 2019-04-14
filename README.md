@@ -1,3 +1,3 @@
 # NC-2019-Projects-Management-System
 Educational project for NetCracker
-to run this application run this app run fapi, be (spring boot projects) and frontend (angular project)
+Run fapi and be as spring boot projects and frontend as angular project
