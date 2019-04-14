@@ -47,3 +47,7 @@ ngb-typeahead-window.dropdown-menu {
 .input-group button:focus, .input-group input:focus {
   z-index: 20;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}

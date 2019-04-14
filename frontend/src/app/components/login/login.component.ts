@@ -2,6 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {validationConfigs} from '../../configs/conf';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
+import {AuthService} from '../../services/auth.service';
+import {UserAuthData} from '../../models/user';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +17,7 @@ export class LoginComponent implements OnInit {
   validationConfigs = validationConfigs;
   hasError: HasErrorFunction;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.formBuilder.group({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.password.minlength),
@@ -29,7 +32,12 @@ export class LoginComponent implements OnInit {
   }
 
   submitForm() {
-    console.log(this.loginForm.value);
+    const formValue = this.loginForm.value;
+    const rememberPassword: boolean = formValue.rememberPassword;
+    const credentials = new UserAuthData(formValue.email, formValue.password);
+    this.authService.login(credentials, rememberPassword).subscribe(() => {
+      this.router.navigate(['']);
+    }, (e: Error) => console.log(e));
   }
 
 }

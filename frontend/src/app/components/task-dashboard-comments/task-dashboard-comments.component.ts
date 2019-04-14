@@ -7,7 +7,7 @@ import {Comment} from '../../models/comment';
   templateUrl: './task-dashboard-comments.component.html',
   styleUrls: ['./task-dashboard-comments.component.css']
 })
-export class TaskDashboardCommentsComponent implements OnInit {
+export class TaskDashboardCommentsComponent {
 
   @Output() submitComment = new EventEmitter<Comment>();
   @Input() comments: Comment[] = [];
@@ -17,33 +17,10 @@ export class TaskDashboardCommentsComponent implements OnInit {
     this.commentForm = this.formBuilder.group({
       text: ''
     });
-
-    // const comment = new Comment()
-
-    // {
-    //   name: 'Name',
-    //     surname: 'Surname',
-    //   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    // },
-    // {
-    //   name: 'Name',
-    //     surname: 'Surname',
-    //   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    // },
-    // {
-    //   name: 'Name',
-    //     surname: 'Surname',
-    //   text: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab accusamus earum eius enim eos exercitationem fugit harum itaque laudantium natus necessitatibus non porro quae quaerat, quisquam reprehenderit sit sunt vitae?'
-    // }
   }
 
   onCommentSubmit() {
     const text = this.commentForm.get('text').value;
-    const comment = new Comment(text);
+    this.submitComment.emit(new Comment(text));
   }
-
-  ngOnInit() {
-
-  }
-
 }

@@ -8,20 +8,27 @@ export class Task {
   project: Project;
   code: number;
   description: string;
-  priority: { name: TaskPriority };
-  status: { name: TaskStatus };
+  priority: {
+    name: TaskPriority,
+    id: number
+  };
+  status: {
+    name: TaskStatus,
+    id: number
+  };
   created: Date;
   dueDate: Date;
   updated: Date;
+  resolved: Date;
+  closed: Date;
   estimation: number;
-  logWork: number;
   assignee: User;
   reporter: User;
 
   constructor(project: Project, description: string, priority: TaskPriority, dueDate: Date, estimation: number, assignee: User) {
     this.project = project;
     this.description = description;
-    this.priority = {name: priority};
+    this.priority = {name: priority, id: null};
     this.dueDate = dueDate;
     this.estimation = estimation;
     this.assignee = assignee;

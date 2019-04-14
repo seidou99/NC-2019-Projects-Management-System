@@ -1,5 +1,7 @@
 package com.netcracker.edu.name2.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -45,6 +47,7 @@ public class Comment {
         this.text = text;
     }
 
+    @JsonIgnore
     public Task getTask() {
         return task;
     }

@@ -1,5 +1,8 @@
 package com.netcracker.edu.name2.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -32,10 +35,12 @@ public class UserAuthData {
         this.email = email;
     }
 
+//    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }

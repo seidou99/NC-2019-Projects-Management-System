@@ -8,7 +8,8 @@ import com.netcracker.edu.name2.backend.repository.UserRepository;
 import com.netcracker.edu.name2.backend.repository.UserRoleRepository;
 import com.netcracker.edu.name2.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,6 +20,11 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserAuthDataRepository userAuthDataRepository;
     private UserRoleRepository userRoleRepository;
+
+    @Bean
+    BCryptPasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Autowired
     UserServiceImpl(UserRepository userRepository, UserAuthDataRepository userAuthDataRepository,
@@ -57,10 +63,11 @@ public class UserServiceImpl implements UserService {
         Optional<UserRole> role = userRoleRepository.findByName(roleName);
         if (role.isPresent()) {
             user.setRole(role.get());
+            String passwordHash = encoder().encode(user.getAuthData().getPassword());
+            user.getAuthData().setPassword(passwordHash);
             userAuthDataRepository.save(user.getAuthData());
             result = userRepository.save(user);
         }
-
         return result;
     }
 

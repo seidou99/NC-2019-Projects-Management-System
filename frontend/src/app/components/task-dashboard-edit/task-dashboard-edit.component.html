@@ -1,0 +1,160 @@
+<form [formGroup]="taskForm" (ngSubmit)="submitForm()">
+  <h4>Details</h4>
+  <div class="row mt-4">
+    <div class="col-sm-12 col-md-5">
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Priority</label>
+        </div>
+        <div class="col-md-9">
+          <select type="text" class="form-control" formControlName="priority">
+            <option *ngFor="let priority of availablePriority">{{priority}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Status</label>
+        </div>
+        <div class="col-md-9">
+          <select type="text" class="form-control" formControlName="status">
+            <option *ngFor="let status of availableStatus">{{status}}</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-sm-12 col-md-5">
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Assignee</label>
+        </div>
+        <div class="col-md-9">
+          <input type="text" class="form-control" [ngbTypeahead]="assigneeSearch" formControlName="assignee"
+                 (focus)="assigneeFocus$.next($event.target.value)" (click)="assigneeClick$.next($event.target.value)"
+                 #assigneeTypeahead="ngbTypeahead">
+          <div class="alert alert-danger mt-2"
+               *ngIf="hasError('assignee', 'required') && !assigneeTypeahead.isPopupOpen()">
+            Assignee is required
+          </div>
+          <div class="alert alert-danger mt-2"
+               *ngIf="hasError('assignee', 'valueContains') && !assigneeTypeahead.isPopupOpen()">
+            Wrong assignee value
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Reporter</label>
+        </div>
+        <div class="col-md-9">
+          <input type="text" class="form-control" formControlName="reporter">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Estimation (in hours)</label>
+        </div>
+        <div class="col-md-9">
+          <input type="number" class="form-control" formControlName="estimation">
+          <div class="alert alert-danger mt-2" *ngIf="hasError('estimation', 'required')">
+            Estimation is required
+          </div>
+          <div class="alert alert-danger mt-2" *ngIf="hasError('estimation', 'min')">
+            Estimation must be {{validationConfigs.estimation.min}} hour(s) or more
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h4>Description</h4>
+  <div class="row mt-4 mb-4">
+
+    <div class="col-sm-12 col-md-5">
+      <div class="form-group h-100">
+        <textarea class="form-control" formControlName="description"
+                  [ngClass]="taskForm.get('description').valid || taskForm.get('description').disabled? 'h-100' : ''"></textarea>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'required')">
+          Task description is required
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'minlength')">
+          Task description length must be {{validationConfigs.taskDescription.minlength}} symbols length or more
+        </div>
+        <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'maxlength')">
+          Taks description length must be {{validationConfigs.taskDescription.maxlength}} symbols length or less
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-2"></div>
+
+    <div class="col-sm-12 mt-sm-3 mt-md-0 col-md-5">
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Created</label>
+        </div>
+        <div class="col-md-9">
+          <input type="date" class="form-control" formControlName="created">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Due date</label>
+        </div>
+        <div class="col-md-9">
+          <input type="date" class="form-control" formControlName="dueDate">
+          <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'required')">
+            Due date is required
+          </div>
+          <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'minDate')">
+            Min date is {{minDueDate}}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Updated</label>
+        </div>
+        <div class="col-md-9">
+          <input type="date" class="form-control" formControlName="updated">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-3">
+          <label>Resolved</label>
+        </div>
+        <div class="col-md-9">
+          <input type="date" class="form-control" formControlName="resolved">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <label>Closed</label>
+        </div>
+        <div class="col-md-9">
+          <input type="date" class="form-control" formControlName="closed">
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <button class="btn btn-outline-success" type="submit" [disabled]="!taskForm.valid || (isFormDisabled$ | async)">
+    Update
+  </button>
+</form>

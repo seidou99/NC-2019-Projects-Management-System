@@ -1,8 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {TaskPriority} from '../../models/task-priority';
+import {ActivatedRoute} from '@angular/router';
+import {TaskService} from '../../services/task.service';
+import {Task} from '../../models/task';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {TaskStatus} from '../../models/task-status';
-import {DatePipe} from '@angular/common';
+import {CommentService} from '../../services/comment.service';
+import {Comment} from '../../models/comment';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-task-dashboard',
@@ -11,65 +15,49 @@ import {DatePipe} from '@angular/common';
 })
 export class TaskDashboardComponent implements OnInit {
 
-  commentForm: FormGroup;
-  taskForm: FormGroup;
-  availableStatus = [];
-  availablePriority = [];
-  isFormDisabled = true;
+  taskName = '';
+  task: Task;
+  comments: Comment[] = [];
+  task$ = new Subject<Task>();
+  isFormDisabled$ = new BehaviorSubject<boolean>(true);
 
-  currentDate() {
-    const currentDate = new Date();
-    return currentDate.toISOString().substring(0, 10);
-  }
-
-  constructor(private formBuilder: FormBuilder) {
-    this.commentForm = this.formBuilder.group({
-      text: ''
-    });
-    this.taskForm = this.formBuilder.group({
-      priority: new FormControl({value: '', disabled: this.isFormDisabled}),
-      status: new FormControl({value: '', disabled: this.isFormDisabled}),
-      assignee: new FormControl({value: '', disabled: this.isFormDisabled}),
-      reporter: new FormControl({value: '', disabled: this.isFormDisabled}),
-      estimation: new FormControl({value: this.currentDate(), disabled: this.isFormDisabled}),
-      description: new FormControl({value: '', disabled: true}),
-      created: new FormControl({value: this.currentDate(), disabled: this.isFormDisabled}, []),
-      updated: new FormControl({value: this.currentDate(), disabled: this.isFormDisabled}),
-      resolved: new FormControl({value: this.currentDate(), disabled: this.isFormDisabled}),
-      closed: new FormControl({value: this.currentDate(), disabled: this.isFormDisabled})
-    });
-    for (const status in TaskStatus) {
-      this.availableStatus.push(TaskStatus[status]);
-    }
-    for (const priority in TaskPriority) {
-      this.availablePriority.push(TaskPriority[priority]);
-    }
+  constructor(private route: ActivatedRoute, private taskService: TaskService, private commentService: CommentService,
+              private authService: AuthService) {
   }
 
   ngOnInit() {
+    const taskId = this.route.snapshot.paramMap.get('taskId');
+    this.taskService.getTaskById(taskId).subscribe((task: Task) => {
+      this.task = task;
+      this.task$.next(task);
+      this.taskName = `${task.project.code}-${task.code}`;
+    }, (e: Error) => console.log(e));
+    this.commentService.getAllCommentsByTaskId(taskId).subscribe((comments: Comment[]) => this.comments = comments,
+      (e: Error) => console.log(e));
   }
 
-  submitComment() {
-    console.log(this.commentForm.value);
+  submitComment(comment: Comment) {
+    this.commentService.createComment(comment, this.route.snapshot.paramMap.get('taskId')).subscribe(
+      () => {
+      }, (e: Error) => console.log(e));
   }
 
-  submitTask() {
-    console.log(this.taskForm.value);
+  changeStatus(status: TaskStatus) {
+    if (this.task) {
+      this.task.status.id = null;
+      this.task.status.name = status;
+      this.submitTask(this.task);
+    }
+  }
+
+  submitTask(task: Task) {
+    this.taskService.updateTask(task).subscribe((data: Task) => {
+      this.ngOnInit();
+      this.isFormDisabled$.next(true);
+    }, (e: Error) => console.log(e));
   }
 
   onEditClick() {
-    if (this.isFormDisabled) {
-      this.isFormDisabled = false;
-      for (const controlName in this.taskForm.controls) {
-        this.taskForm.get(controlName).enable();
-      }
-    } else {
-      this.isFormDisabled = true;
-      for (const controlName in this.taskForm.controls) {
-        this.taskForm.get(controlName).disable();
-      }
-    }
-
+    this.isFormDisabled$.next(!this.isFormDisabled$.value);
   }
-
 }

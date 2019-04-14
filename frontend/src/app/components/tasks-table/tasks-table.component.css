@@ -10,3 +10,23 @@ tbody tr {
 .nowrap {
   white-space: nowrap;
 }
+
+.btn-group {
+  margin-bottom: 1em;
+}
+
+button {
+  position: relative;
+}
+
+button:focus {
+  z-index: 20;
+}
+
+tbody tr:hover, tbody tr:focus {
+  cursor: pointer;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}

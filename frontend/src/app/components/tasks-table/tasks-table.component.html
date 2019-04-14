@@ -1,30 +1,40 @@
-<table class="table table-hover table-bordered">
-  <thead>
-  <tr>
-    <th>Project code</th>
-    <th>Task</th>
-    <th>Priority</th>
-    <th>Status</th>
-    <th>Created</th>
-    <th>Updated</th>
-    <th>Due date</th>
-    <th>Estimation in hour(s)</th>
-    <th>Assignee</th>
-    <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let task of tasks" (click)="taskRowClick.emit(task.id)">
-    <td>{{task.project.code}}</td>
-    <td class="nowrap">{{task.project.code}}-{{task.code}}</td>
-    <td>{{task.priority.name}}</td>
-    <td>{{task.status.name}}</td>
-    <td>{{task.created | date}}</td>
-    <td>{{task.updated ? task.updated : '' | date}}</td>
-    <td>{{task.dueDate | date}}</td>
-    <td>{{task.estimation}}</td>
-    <td>{{task.assignee.surname + ' ' + task.assignee.name}}</td>
-    <td>{{task.description}}</td>
-  </tr>
-  </tbody>
-</table>
+<div class="overflow-x-auto m-2">
+  <table class="table table-hover table-bordered">
+    <thead>
+    <tr>
+      <th>Task</th>
+      <th>Priority</th>
+      <th>Status</th>
+      <th>Created</th>
+      <th>Updated</th>
+      <th>Due date</th>
+      <th>Estimation in hour(s)</th>
+      <th>Assignee</th>
+      <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let task of tasks" (click)="taskRowClick.emit(task.id)">
+      <td class="nowrap">{{task.project.code}}-{{task.code}}</td>
+      <td>{{task.priority.name}}</td>
+      <td>{{task.status.name}}</td>
+      <td>{{task.created | date}}</td>
+      <td>{{task.updated ? (task.updated | date) : ''}}</td>
+      <td>{{task.dueDate | date}}</td>
+      <td>{{task.estimation}}</td>
+      <td>{{task.assignee.surname + ' ' + task.assignee.name}}</td>
+      <td>{{task.description}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-between m-2">
+  <div class="btn-group mb-0" role="group">
+    <button *ngFor="let button of buttons" type="button" class="btn"
+            [ngClass]="button.pageNumber == button.name && button.pageNumber === pageNumber ? 'btn-primary' : 'btn-secondary'"
+            (click)="pageChange.emit(button.pageNumber)"
+            [disabled]="button.pageNumber < 1 || button.pageNumber > lastPage || button.pageNumber === pageNumber">{{button.name}}</button>
+  </div>
+  <p class="m-0 align-self-center">Rows {{firstRowNumber}}
+    - {{lastRowNumber}} of {{recordsAmount}}</p>
+</div>

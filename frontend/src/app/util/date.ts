@@ -7,13 +7,13 @@ export function getNextDay(): Date {
 }
 
 export function transformDate(date: Date): string {
-  return date.toISOString().substring(0, 10);
+  return date.toString().substring(0, 10);
 }
 
 export function minDateValidator(minDate: Date) {
   minDate.setHours(0, 0, 0, 0);
   return (dateControl: AbstractControl) => {
-    if (new Date(dateControl.value) >= minDate) {
+    if (!dateControl.value || new Date(dateControl.value) >= minDate) {
       return null;
     } else {
       return {minDate: true};

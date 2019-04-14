@@ -18,6 +18,8 @@ import {HomeNavbarComponent} from './components/home-navbar/home-navbar.componen
 import {TaskDashboardNavbarComponent} from './components/task-dashboard-navbar/task-dashboard-navbar.component';
 import {TaskDashboardCommentsComponent} from './components/task-dashboard-comments/task-dashboard-comments.component';
 import {DatePipe} from '@angular/common';
+import { TaskDashboardEditComponent } from './components/task-dashboard-edit/task-dashboard-edit.component';
+import { ProjectsComponent } from './components/projects/projects.component';
 
 
 @NgModule({
@@ -32,7 +34,9 @@ import {DatePipe} from '@angular/common';
     TasksTableComponent,
     HomeNavbarComponent,
     TaskDashboardNavbarComponent,
-    TaskDashboardCommentsComponent
+    TaskDashboardCommentsComponent,
+    TaskDashboardEditComponent,
+    ProjectsComponent,
   ],
   imports: [
     BrowserModule,

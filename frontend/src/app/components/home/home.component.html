@@ -1,8 +1,21 @@
 <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"
-                 (createUserClick)="openNewUserModal()"></app-home-navbar>
+                 (createUserClick)="openNewUserModal()" (logoutClick)="logout()"></app-home-navbar>
 
-<div class="wrapper p-3 mt-5">
-  <div class="table-wrapper">
-    <app-tasks-table (taskRowClick)="onTaskRowClick($event)" [tasks]="tasks"></app-tasks-table>
+<div class="wrapper p-2 mt-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-2 pl-2">
+        <app-projects [projects]="projects" (projectChangeEmitter)="projectChange($event)"
+                      [selectedProjectId]="currentProjectId"></app-projects>
+      </div>
+      <div class="col-10 p-0">
+        <app-tasks-table (taskRowClick)="onTaskRowClick($event)" [tasks]="tasks" [pageNumber]="pageNumber"
+                         [pageSize]="pageSize" [recordsAmount]="recordsAmount" (pageChange)="onPageChange($event)">
+        </app-tasks-table>
+      </div>
+    </div>
   </div>
 </div>
+
+
+

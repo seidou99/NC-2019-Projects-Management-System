@@ -1,0 +1,11 @@
+button {
+  position: relative;
+}
+
+button:focus {
+  z-index: 20;
+}
+
+.list-group-item-info {
+  text-align: inherit;
+}

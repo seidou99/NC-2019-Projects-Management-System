@@ -2,7 +2,7 @@ insert into user_role (name)
 values ('Admin'),
        ('Project manager'),
        ('Developer'),
-       ('Tester');
+       ('QA');
 
 insert into task_priority (name)
 values ('Blocker'),

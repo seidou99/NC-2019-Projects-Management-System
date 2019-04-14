@@ -1,14 +1,15 @@
-<nav>
+<nav class="sticky-top">
   <div class="wrapper p-3">
-    <h3 class="text-white">Description</h3>
+    <h3 class="text-white">{{header}}</h3>
     <div class="mt-3 buttons-container d-flex flex-wrap justify-content-between">
       <button class="btn btn-outline-secondary" (click)="editClick.emit()">Edit</button>
-      <button class="btn btn-outline-secondary" (click)="assignClick.emit()">Assign</button>
-      <button class="btn btn-outline-secondary" (click)="startClick.emit()">Start</button>
-      <button class="btn btn-outline-secondary" (click)="resolveClick.emit()">Resolve</button>
-      <button class="btn btn-outline-secondary" (click)="readyForTestClick.emit()">Ready for test</button>
-      <button class="btn btn-outline-secondary" (click)="reOpenClick.emit()">ReOpen</button>
-      <button class="btn btn-outline-secondary" (close)="closeClick.emit()">Close</button>
+      <!--<button class="btn btn-outline-secondary" (click)="assignClick.emit()">Assign</button>-->
+      <button class="btn btn-outline-secondary" (click)="statusChange.emit(TaskStatus.IN_PROGRESS)">Start</button>
+      <button class="btn btn-outline-secondary" (click)="statusChange.emit(TaskStatus.RESOLVED)">Resolve</button>
+      <button class="btn btn-outline-secondary" (click)="statusChange.emit(TaskStatus.READY_FOR_TEST)">Ready for test
+      </button>
+      <button class="btn btn-outline-secondary" (click)="statusChange.emit(TaskStatus.REOPEN)">ReOpen</button>
+      <button class="btn btn-outline-secondary" (click)="statusChange.emit(TaskStatus.CLOSED)">Close</button>
       <button class="btn btn-outline-secondary" routerLink="/">Home</button>
     </div>
   </div>

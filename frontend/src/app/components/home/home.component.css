@@ -1,7 +1,0 @@
-tbody tr:hover, tbody tr:focus {
-  cursor: pointer;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}

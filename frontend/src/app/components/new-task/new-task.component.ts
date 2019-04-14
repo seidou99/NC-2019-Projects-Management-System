@@ -5,15 +5,15 @@ import {validationConfigs} from '../../configs/conf';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {Project} from '../../models/project';
 import {ProjectService} from '../../services/project.service';
-import {merge, Observable, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 import {UserRole} from '../../models/user-role';
 import {TaskPriority} from '../../models/task-priority';
 import {User} from '../../models/user';
 import {Task} from '../../models/task';
 import {UserService} from '../../services/user.service';
 import {DatePipe} from '@angular/common';
-import {transformDate, getNextDay, minDateValidator} from '../../util/date-util';
+import {getNextDay, minDateValidator, transformDate} from '../../util/date';
+import {projectMapper, search, userMapper, valueContainsValidator} from '../../util/typeahead';
 
 @Component({
   selector: 'app-new-task',
@@ -45,7 +45,7 @@ export class NewTaskComponent implements OnInit {
     }
     this.newTaskForm = this.formBuilder.group({
       code: new FormControl('', {
-        validators: [Validators.required, this.valueContainsValidator(this.projects, this.projectMapper)], updateOn: 'blur'
+        validators: [Validators.required, valueContainsValidator(this.projects, projectMapper)], updateOn: 'blur'
       }),
       description: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.taskDescription.minlength),
         Validators.maxLength(validationConfigs.taskDescription.maxlength)]),
@@ -54,7 +54,7 @@ export class NewTaskComponent implements OnInit {
       estimation: new FormControl(validationConfigs.estimation.min, [Validators.required,
         Validators.min(validationConfigs.estimation.min)]),
       assignee: new FormControl('', {
-        validators: [this.valueContainsValidator(this.developers, this.developerMapper)],
+        validators: [valueContainsValidator(this.developers, userMapper)],
         updateOn: 'blur'
       })
     });
@@ -65,58 +65,16 @@ export class NewTaskComponent implements OnInit {
     this.projectService.getAllProjects().subscribe(
       (data: Project[]) => {
         data.forEach((value: Project) => this.projects.push(value));
-        // console.log('projects ' + this.projects);
       }, (e) => {
         console.log(e);
       }
     );
-    this.userService.getAllUsersByRole(UserRole.DEVELOPER).subscribe((data: User[]) => {
+    this.userService.getAllUsersByRole([UserRole.DEVELOPER, UserRole.QA]).subscribe((data: User[]) => {
       data.forEach((u: User) => this.developers.push(u));
     }, (e) => console.log(e));
-    this.projectCodeSearch = this.search<Project>(this.codeTypeahead, this.codeFocus$, this.codeClick$, this.projects, this.projectMapper);
-    this.assigneeSearch = this.search<User>(this.assigneeTypeahead, this.assigneeFocus$, this.assigneeClick$,
-      this.developers, this.developerMapper);
-  }
-
-  valueContainsValidator<T>(data: T[], mapper: (obj: T) => string) {
-    return (control: FormControl) => {
-      if (data.map(mapper).find((v: string) => v === control.value) || control.value === '') {
-        return null;
-      } else {
-        return {valueContains: true};
-      }
-    };
-  }
-
-  projectMapper(obj: Project): string {
-    return obj.code;
-  }
-
-  developerMapper(obj: User): string {
-    return obj.surname + ' ' + obj.name + ' (' + obj.authData.email + ')';
-  }
-
-  search<T>(instance: NgbTypeahead, focus$: Subject<string>, click$: Subject<string>, rawData: T[], mapper: (obj: T) => string) {
-    return (text$: Observable<string>) => {
-      const debouncedText$ = text$.pipe(debounceTime(200), distinctUntilChanged());
-      const clickWithClosedPopup$ = click$.pipe(
-        filter(() => {
-          return !instance.isPopupOpen();
-        })
-      );
-      return merge(debouncedText$, focus$, clickWithClosedPopup$).pipe(
-        map((term: string) => {
-            let data = [];
-            if (term === '') {
-              data = rawData.map(mapper);
-            } else {
-              data = rawData.map(mapper).filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 20);
-            }
-            return data;
-          }
-        )
-      );
-    };
+    this.projectCodeSearch = search<Project>(this.codeTypeahead, this.codeFocus$, this.codeClick$, this.projects, projectMapper);
+    this.assigneeSearch = search<User>(this.assigneeTypeahead, this.assigneeFocus$, this.assigneeClick$,
+      this.developers, userMapper);
   }
 
   submitForm() {
@@ -124,7 +82,7 @@ export class NewTaskComponent implements OnInit {
     const project: Project = this.projects.filter((v: Project) => v.code === formValue.code)[0];
     let assignee: User = null;
     if (formValue.assignee.length) {
-      assignee = this.developers.filter((v: User) => this.developerMapper(v) === formValue.assignee)[0];
+      assignee = this.developers.filter((v: User) => userMapper(v) === formValue.assignee)[0];
     }
     const task = new Task(project, formValue.description, formValue.priority, new Date(formValue.dueDate), formValue.estimation, assignee);
     this.activeModal.close(task);

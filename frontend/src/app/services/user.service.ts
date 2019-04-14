@@ -14,13 +14,15 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  createUser(user: User): Observable<User> {
-    return this.http.post<User>(usersURI, user);
+  createUser(user: User): Observable<any> {
+    return this.http.post(usersURI, user);
   }
 
-  getAllUsersByRole(role: UserRole): Observable<User[]> {
+  getAllUsersByRole(roles: UserRole[]): Observable<User[]> {
     return this.http.get<User[]>(usersURI).pipe(
-      map((v: User[]) => v.filter((u: User) => u.role.name === role))
+      map((v: User[]) => v.filter((u: User) => {
+        return roles.find((role: UserRole) => u.role.name === role);
+      }))
     );
   }
 }

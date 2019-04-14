@@ -4,6 +4,7 @@ import com.netcracker.edu.name2.backend.entity.Task;
 import com.netcracker.edu.name2.backend.repository.TaskRepository;
 import com.netcracker.edu.name2.backend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,12 @@ public class TaskController {
         return taskService.findAll();
     }
 
+    @GetMapping(params = {"page", "size", "projectId"})
+    public Page<Task> getAllTasksByProjectId(@RequestParam("page") int page, @RequestParam("size") int size,
+                                             @RequestParam("projectId") Long projectId) {
+        return this.taskService.findAllByProjectId(projectId, page, size);
+    }
+
     @PostMapping
     public Task createTask(@RequestBody Task task) {
         System.out.println(task);
@@ -31,13 +38,14 @@ public class TaskController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @GetMapping(value = "/amount")
-    public Long getAmount() {
-        return taskRepository.countTasksWithProjectId(1L);
-    }
-
     @GetMapping(value = "/{taskId}")
     public Task findTaskById(@PathVariable(name = "taskId") Long taskId) {
         return taskService.findById(taskId).get();
+    }
+
+    @PutMapping(value = "/{taskId}")
+    public Task updateTask(@RequestBody Task task) {
+        System.out.println(task);
+        return taskService.update(task);
     }
 }

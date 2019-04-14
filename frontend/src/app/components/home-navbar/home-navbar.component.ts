@@ -7,10 +7,13 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 })
 export class HomeNavbarComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+  }
+
   @Output() createProjectClick = new EventEmitter();
   @Output() createUserClick = new EventEmitter();
   @Output() createTaskClick = new EventEmitter();
+  @Output() logoutClick = new EventEmitter();
 
   ngOnInit() {
   }

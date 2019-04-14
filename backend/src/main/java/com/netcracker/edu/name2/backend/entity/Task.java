@@ -35,20 +35,24 @@ public class Task {
     private TaskStatus status;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date created;
 
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date dueDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
+    private Date resolved;
+
+    @Temporal(TemporalType.DATE)
+    private Date closed;
+
+    @Temporal(TemporalType.DATE)
     private Date updated;
 
     @NotNull
     private int estimation;
-
-    private int logWork;
 
     @ManyToOne(targetEntity = User.class)
     private User assignee;
@@ -153,12 +157,20 @@ public class Task {
         this.created = created;
     }
 
-    public int getLogWork() {
-        return logWork;
+    public Date getResolved() {
+        return resolved;
     }
 
-    public void setLogWork(int logWork) {
-        this.logWork = logWork;
+    public void setResolved(Date resolved) {
+        this.resolved = resolved;
+    }
+
+    public Date getClosed() {
+        return closed;
+    }
+
+    public void setClosed(Date closed) {
+        this.closed = closed;
     }
 
     @Override
@@ -166,16 +178,17 @@ public class Task {
         if (this == o) return true;
         if (!(o instanceof Task)) return false;
         Task task = (Task) o;
-        return code == task.code &&
-                estimation == task.estimation &&
-                logWork == task.logWork &&
+        return estimation == task.estimation &&
                 Objects.equals(id, task.id) &&
                 Objects.equals(project, task.project) &&
+                Objects.equals(code, task.code) &&
                 Objects.equals(description, task.description) &&
                 Objects.equals(priority, task.priority) &&
                 Objects.equals(status, task.status) &&
                 Objects.equals(created, task.created) &&
                 Objects.equals(dueDate, task.dueDate) &&
+                Objects.equals(resolved, task.resolved) &&
+                Objects.equals(closed, task.closed) &&
                 Objects.equals(updated, task.updated) &&
                 Objects.equals(assignee, task.assignee) &&
                 Objects.equals(reporter, task.reporter);
@@ -183,7 +196,7 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, project, code, description, priority, status, created, dueDate, updated, estimation, logWork, assignee, reporter);
+        return Objects.hash(id, project, code, description, priority, status, created, dueDate, resolved, closed, updated, estimation, assignee, reporter);
     }
 
     @Override
@@ -197,9 +210,10 @@ public class Task {
                 ", status=" + status +
                 ", created=" + created +
                 ", dueDate=" + dueDate +
+                ", resolved=" + resolved +
+                ", closed=" + closed +
                 ", updated=" + updated +
                 ", estimation=" + estimation +
-                ", logWork=" + logWork +
                 ", assignee=" + assignee +
                 ", reporter=" + reporter +
                 '}';
