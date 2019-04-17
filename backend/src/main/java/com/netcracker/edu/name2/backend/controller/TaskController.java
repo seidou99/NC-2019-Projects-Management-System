@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/projects/{projectId}/tasks")
 public class TaskController {
 
     private TaskService taskService;

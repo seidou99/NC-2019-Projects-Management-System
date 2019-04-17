@@ -20,7 +20,7 @@ public class Task {
     @ManyToOne(targetEntity = Project.class)
     private Project project;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private Long code;
 
     @Column(length = 200, nullable = false)

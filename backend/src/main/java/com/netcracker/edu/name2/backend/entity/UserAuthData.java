@@ -13,7 +13,7 @@ public class UserAuthData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false/*, unique = true*/)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -35,7 +35,7 @@ public class UserAuthData {
         this.email = email;
     }
 
-//    @JsonIgnore
+    //    @JsonIgnore
     public String getPassword() {
         return password;
     }

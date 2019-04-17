@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {usersURI} from '../configs/conf';
+import {registerURI, usersURI} from '../configs/conf';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
 import {UserRole} from '../models/user-role';
@@ -15,7 +15,7 @@ export class UserService {
   }
 
   createUser(user: User): Observable<any> {
-    return this.http.post(usersURI, user);
+    return this.http.post(registerURI, user);
   }
 
   getAllUsersByRole(roles: UserRole[]): Observable<User[]> {

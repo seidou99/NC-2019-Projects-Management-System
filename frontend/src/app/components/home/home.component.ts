@@ -10,9 +10,9 @@ import {ProjectService} from '../../services/project.service';
 import {Router} from '@angular/router';
 import {Task} from '../../models/task';
 import {TaskService} from '../../services/task.service';
-import {Subject} from 'rxjs';
 import {Page} from '../../models/page';
 import {AuthService} from '../../services/auth.service';
+import {UserRole} from '../../models/user-role';
 
 @Component({
   selector: 'app-home',
@@ -115,5 +115,19 @@ export class HomeComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['login']);
+  }
+
+  isNewProjectAvailable(): boolean {
+    return this.authService.getUserRole() === UserRole.PROJECT_MANAGER;
+  }
+
+  isNewUserAvailable(): boolean {
+    return this.authService.getUserRole() === UserRole.ADMIN;
+  }
+
+  isNewTaskAvailable(): boolean {
+    const currentRole = this.authService.getUserRole();
+    const reporterRoles = [UserRole.PROJECT_MANAGER, UserRole.DEVELOPER, UserRole.QA];
+    return reporterRoles.findIndex((v: UserRole) => v === currentRole) > -1;
   }
 }

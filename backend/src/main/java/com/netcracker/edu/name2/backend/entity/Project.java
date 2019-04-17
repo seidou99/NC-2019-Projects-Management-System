@@ -9,7 +9,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 6, nullable = false/*, unique = true*/)
+    @Column(length = 6, nullable = false, unique = true)
     private String code;
 
     @Column(length = 200, nullable = false)

@@ -2,9 +2,13 @@
   <div class="wrapper p-3">
     <div class="d-flex justify-content-between flex-wrap">
       <div class="buttons-container">
-        <button class="btn btn-outline-secondary" (click)="createProjectClick.emit()">New Project</button>
-        <button class="btn btn-outline-secondary" (click)="createTaskClick.emit()">New Task</button>
-        <button class="btn btn-outline-secondary" (click)="createUserClick.emit()">New User</button>
+        <button class="btn btn-outline-secondary" *ngIf="isNewProjectAvailable" (click)="createProjectClick.emit()">New
+          Project
+        </button>
+        <button class="btn btn-outline-secondary" *ngIf="isNewTaskAvailable" (click)="createTaskClick.emit()">New Task
+        </button>
+        <button class="btn btn-outline-secondary" *ngIf="isNewUserAvailable" (click)="createUserClick.emit()">New User
+        </button>
         <button class="btn btn-outline-secondary" (click)="logoutClick.emit()">Logout</button>
       </div>
       <form>

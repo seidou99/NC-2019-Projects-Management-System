@@ -5,7 +5,6 @@ import {HttpClient} from '@angular/common/http';
 import {loginURI} from '../configs/conf';
 import {map} from 'rxjs/operators';
 import {TokenResponse} from '../models/tokenResponse';
-import {tokenKey} from '@angular/core/src/view';
 import {Observable} from 'rxjs';
 import jwt_decode from 'jwt-decode';
 
@@ -15,7 +14,7 @@ import jwt_decode from 'jwt-decode';
 export class AuthService {
 
   private readonly tokenKey: string = 'token';
-  private token = '';
+  private token;
 
   constructor(private http: HttpClient) {
   }
@@ -26,10 +25,8 @@ export class AuthService {
         localStorage.removeItem(this.tokenKey);
         if (rememberPassword) {
           localStorage.setItem(this.tokenKey, tokenResponse.token);
-
-          console.log('in storage ' + localStorage.getItem(this.tokenKey));
-
         }
+        console.log(localStorage.getItem(this.tokenKey));
         this.token = tokenResponse.token;
         return tokenResponse;
       })
@@ -37,15 +34,23 @@ export class AuthService {
   }
 
   logout() {
-    this.token = '';
+    this.token = null;
     localStorage.removeItem(this.tokenKey);
   }
 
   private getTokenPayload(): any {
-    if (this.token) {
+    return jwt_decode(this.getToken());
+  }
+
+  getToken() {
+    if (!this.token) {
       this.token = localStorage.getItem(this.tokenKey);
     }
-    return jwt_decode(this.token);
+    return this.token;
+  }
+
+  isTokenNotExpired(): boolean {
+    return +this.getTokenPayload().exp * 1000 > new Date().valueOf();
   }
 
   getUserRole(): UserRole {

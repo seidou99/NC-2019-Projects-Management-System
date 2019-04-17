@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-home-navbar',
@@ -9,6 +9,10 @@ export class HomeNavbarComponent implements OnInit {
 
   constructor() {
   }
+
+  @Input() isNewProjectAvailable: boolean;
+  @Input() isNewUserAvailable: boolean;
+  @Input() isNewTaskAvailable: boolean;
 
   @Output() createProjectClick = new EventEmitter();
   @Output() createUserClick = new EventEmitter();

@@ -4,7 +4,10 @@ import {validationConfigs} from '../../configs/conf';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {AuthService} from '../../services/auth.service';
 import {UserAuthData} from '../../models/user';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router, RouterState} from '@angular/router';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +19,10 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   validationConfigs = validationConfigs;
   hasError: HasErrorFunction;
+  errorText = '';
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router,
+              private activatedRoute: ActivatedRoute) {
     this.loginForm = this.formBuilder.group({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.password.minlength),
@@ -28,7 +33,12 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    const state$: Observable<any> = this.activatedRoute.paramMap.pipe(
+      map(() => window.history.state)
+    );
+    state$.subscribe((state: any) => {
+      this.errorText = state.reason;
+    });
   }
 
   submitForm() {
@@ -37,7 +47,12 @@ export class LoginComponent implements OnInit {
     const credentials = new UserAuthData(formValue.email, formValue.password);
     this.authService.login(credentials, rememberPassword).subscribe(() => {
       this.router.navigate(['']);
-    }, (e: Error) => console.log(e));
+    }, (e: HttpErrorResponse) => {
+      console.log(e);
+      if (e.status === 401) {
+        this.errorText = 'Wrong email or password';
+      }
+    });
   }
 
 }

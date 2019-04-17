@@ -5,6 +5,7 @@ import com.netcracker.edu.name.security.JWTAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -57,7 +58,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/token/*", "/signup").permitAll()
+//                .anyRequest().authenticated()
+                .antMatchers("/api/login").permitAll()
+                .antMatchers("/api/register").hasRole("Admin")
+//                .antMatchers(HttpMethod.POST, "/api/projects").hasRole("Project manager")
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
                 .and()

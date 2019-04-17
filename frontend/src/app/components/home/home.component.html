@@ -1,5 +1,8 @@
 <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"
-                 (createUserClick)="openNewUserModal()" (logoutClick)="logout()"></app-home-navbar>
+                 (createUserClick)="openNewUserModal()" (logoutClick)="logout()"
+                 [isNewProjectAvailable]="isNewProjectAvailable()"
+                 [isNewUserAvailable]="isNewUserAvailable()"
+                 [isNewTaskAvailable]="isNewTaskAvailable()"></app-home-navbar>
 
 <div class="wrapper p-2 mt-5">
   <div class="container-fluid">

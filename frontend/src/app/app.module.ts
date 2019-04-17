@@ -12,15 +12,16 @@ import {NewProjectComponent} from './components/new-project/new-project.componen
 import {NewUserComponent} from './components/new-user/new-user.component';
 import {NewTaskComponent} from './components/new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {TasksTableComponent} from './components/tasks-table/tasks-table.component';
 import {HomeNavbarComponent} from './components/home-navbar/home-navbar.component';
 import {TaskDashboardNavbarComponent} from './components/task-dashboard-navbar/task-dashboard-navbar.component';
 import {TaskDashboardCommentsComponent} from './components/task-dashboard-comments/task-dashboard-comments.component';
 import {DatePipe} from '@angular/common';
-import { TaskDashboardEditComponent } from './components/task-dashboard-edit/task-dashboard-edit.component';
-import { ProjectsComponent } from './components/projects/projects.component';
-
+import {TaskDashboardEditComponent} from './components/task-dashboard-edit/task-dashboard-edit.component';
+import {ProjectsComponent} from './components/projects/projects.component';
+import {TokenInterceptor} from './interceptors/token.interceptor';
+import {ErrorInterceptor} from './interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,7 @@ import { ProjectsComponent } from './components/projects/projects.component';
     TaskDashboardNavbarComponent,
     TaskDashboardCommentsComponent,
     TaskDashboardEditComponent,
-    ProjectsComponent,
+    ProjectsComponent
   ],
   imports: [
     BrowserModule,
@@ -48,7 +49,17 @@ import { ProjectsComponent } from './components/projects/projects.component';
     HttpClientModule
   ],
   providers: [
-    DatePipe
+    DatePipe,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
+      multi: true
+    }
   ],
   entryComponents: [
     NewProjectComponent,

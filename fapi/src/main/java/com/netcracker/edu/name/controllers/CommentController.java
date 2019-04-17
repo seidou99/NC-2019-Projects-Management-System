@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("/api/tasks/{taskId}/comments")
+@RequestMapping("/api/projects/{projectId}/tasks/{taskId}/comments")
 public class CommentController {
 
     @Autowired

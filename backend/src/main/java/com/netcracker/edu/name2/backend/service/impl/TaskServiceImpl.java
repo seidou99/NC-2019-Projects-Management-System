@@ -52,6 +52,11 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(openStatus.get());
         task.setCreated(new Date());
         task.setCode(taskRepository.countTasksWithProjectId(task.getProject().getId()) + 1);
+//        task.setReporter(userService.findById(task.getReporter().getId()).get());
+        task.setReporter(userService.findByEmail(task.getReporter().getAuthData().getEmail()).get());
+        if (task.getAssignee() == null) {
+            task.setAssignee(task.getReporter());
+        }
         taskRepository.save(task);
         return task;
     }

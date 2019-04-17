@@ -8,6 +8,7 @@ import com.netcracker.edu.name.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,8 +30,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/register")
+//    @Secured("Admin")
+    @PostMapping(value = "/users")
     public ResponseEntity register(@RequestBody User user) {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         this.userService.save(user);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -44,6 +47,7 @@ public class UserController {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(authentication);
         String token = tokenProvider.generateToken(authentication);
         return ResponseEntity.ok(new AuthToken(token));
     }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/tasks/{taskId}/comments")
+@RequestMapping("/api/projects/{projectId}/tasks/{taskId}/comments")
 public class CommentController {
 
     private CommentService commentService;
