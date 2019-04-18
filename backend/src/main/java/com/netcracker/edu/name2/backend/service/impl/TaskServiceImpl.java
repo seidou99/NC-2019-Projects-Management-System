@@ -77,7 +77,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> findAllByProjectId(Long id, int pageNumber, int pageSize) {
+    public Page<Task> getTasksPage(Long id, int pageNumber, int pageSize) {
         Project project = projectService.findById(id).get();
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return taskRepository.findAllByProject(project, pageable);

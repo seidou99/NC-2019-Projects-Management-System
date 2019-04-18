@@ -9,3 +9,7 @@ button:focus {
 .list-group-item-info {
   text-align: inherit;
 }
+
+.break-word {
+  word-break: break-word;
+}

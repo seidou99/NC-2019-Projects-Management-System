@@ -13,11 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Primary
@@ -42,7 +40,18 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Override
     public Iterable<User> findAll() {
         User[] users = restTemplate.getForObject(config.getUsersUri(), User[].class);
-        return users == null ? Collections.emptyList() : Arrays.asList(users);
+        return Arrays.asList(users);
+    }
+
+    @Override
+    public Iterable<User> findAllWithRoles(List<String> roles) {
+        UriComponentsBuilder uri = UriComponentsBuilder
+                .fromHttpUrl(config.getUsersUri());
+        for (String role : roles) {
+            uri.queryParam("roles", role);
+        }
+        User[] users = restTemplate.getForObject(uri.toUriString(), User[].class);
+        return Arrays.asList(users);
     }
 
     @Override

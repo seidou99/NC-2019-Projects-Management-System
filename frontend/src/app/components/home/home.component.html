@@ -2,9 +2,10 @@
                  (createUserClick)="openNewUserModal()" (logoutClick)="logout()"
                  [isNewProjectAvailable]="isNewProjectAvailable()"
                  [isNewUserAvailable]="isNewUserAvailable()"
-                 [isNewTaskAvailable]="isNewTaskAvailable()"></app-home-navbar>
+                 [isNewTaskAvailable]="isNewTaskAvailable()">
+</app-home-navbar>
 
-<div class="wrapper p-2 mt-5">
+<div class="wrapper p-2 mt-5" *ngIf="authService.getUserRole() !== UserRole.ADMIN">
   <div class="container-fluid">
     <div class="row">
       <div class="col-2 pl-2">
@@ -12,7 +13,7 @@
                       [selectedProjectId]="currentProjectId"></app-projects>
       </div>
       <div class="col-10 p-0">
-        <app-tasks-table (taskRowClick)="onTaskRowClick($event)" [tasks]="tasks" [pageNumber]="pageNumber"
+        <app-tasks-table (taskRowClick)="onTaskRowClick($event)" [page$]="page$" [pageNumber]="pageNumber"
                          [pageSize]="pageSize" [recordsAmount]="recordsAmount" (pageChange)="onPageChange($event)">
         </app-tasks-table>
       </div>

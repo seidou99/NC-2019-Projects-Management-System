@@ -23,10 +23,9 @@ public class TaskController {
         return taskService.findAll();
     }
 
-    @GetMapping(params = {"page", "size", "projectId"})
-    public Page<Task> getAllTasksByProjectId(@RequestParam("page") int page, @RequestParam("size") int size,
-                                             @RequestParam("projectId") Long projectId) {
-        return this.taskService.findAllByProjectId(projectId, page, size);
+    @GetMapping(params = {"page", "size"})
+    public Page<Task> getAllTasksByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page, @RequestParam("size") int size) {
+        return this.taskService.getTasksPage(projectId, page, size);
     }
 
     @PostMapping

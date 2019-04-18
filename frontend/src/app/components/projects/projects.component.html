@@ -4,7 +4,7 @@
       Projects
     </h5>
   </div>
-  <button class="list-group-item" *ngFor="let project of projects"
+  <button class="list-group-item break-word" *ngFor="let project of projects"
           [ngClass]="project.id === selectedProjectId ? 'list-group-item-info' : 'list-group-item-action'"
           (click)="changeProject(project.id)">
     {{project.code}}<br>({{project.summary}})

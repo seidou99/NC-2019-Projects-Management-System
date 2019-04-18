@@ -18,7 +18,7 @@ public interface TaskService {
 
     Task update(Task task);
 
-    Page<Task> findAllByProjectId(Long id, int pageNumber, int pageSize);
+    Page<Task> getTasksPage(Long id, int pageNumber, int pageSize);
 
     Long countTasksWithProjectId(Long projectId);
 }

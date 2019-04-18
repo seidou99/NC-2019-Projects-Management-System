@@ -13,6 +13,8 @@ import {TaskService} from '../../services/task.service';
 import {Page} from '../../models/page';
 import {AuthService} from '../../services/auth.service';
 import {UserRole} from '../../models/user-role';
+import {Subject} from 'rxjs/internal/Subject';
+import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
 
 @Component({
   selector: 'app-home',
@@ -21,15 +23,16 @@ import {UserRole} from '../../models/user-role';
 })
 export class HomeComponent implements OnInit {
 
-  tasks: Task[] = [];
+  page$ = new BehaviorSubject<Task[]>([]);
   projects: Project[] = [];
   currentProjectId: number;
   pageNumber = 1;
   pageSize = 20;
   recordsAmount = 0;
+  UserRole = UserRole;
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
-              private router: Router, private taskService: TaskService, private authService: AuthService) {
+              private router: Router, private taskService: TaskService, public authService: AuthService) {
   }
 
   ngOnInit() {
@@ -49,8 +52,8 @@ export class HomeComponent implements OnInit {
   }
 
   loadTasks() {
-    this.taskService.getAllTasksByProjectId(this.currentProjectId, this.pageNumber, this.pageSize).subscribe((data: Page<Task>) => {
-      this.tasks = data.content;
+    this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber, this.pageSize).subscribe((data: Page<Task>) => {
+      this.page$.next(data.content);
       this.recordsAmount = data.totalElements;
     }, (e: Error) => console.log(e));
   }
@@ -72,7 +75,7 @@ export class HomeComponent implements OnInit {
   }
 
   onTaskRowClick(taskId: number) {
-    this.router.navigate(['tasks', taskId]);
+    this.router.navigate(['projects', this.currentProjectId, 'tasks', taskId]);
   }
 
   openNewUserModal() {

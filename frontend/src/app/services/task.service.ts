@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Task} from '../models/task';
-import {tasksURI} from '../configs/conf';
+import {projectsURI} from '../configs/conf';
 import {Observable} from 'rxjs';
 import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';
@@ -21,11 +21,11 @@ export class TaskService {
     if (!task.assignee) {
       task.assignee = task.reporter;
     }
-    console.log('sending task to server ' + JSON.stringify(task));
-    return this.http.post(tasksURI, task);
+    return this.http.post(`${projectsURI}/${task.project.id}/tasks`, task);
   }
 
   processTaskDates(task: Task): Task {
+    console.log(task);
     task.created = new Date(task.created);
     task.dueDate = new Date(task.dueDate);
     if (task.updated) {
@@ -40,24 +40,21 @@ export class TaskService {
     return task;
   }
 
-  getAllTasksByProjectId(projectId: number, pageNumber: number, pageSize: number): Observable<Page<Task>> {
+  getTasksPage(projectId: string, pageNumber: number, pageSize: number): Observable<Page<Task>> {
     const params = new HttpParams()
       .set('page', `${pageNumber - 1}`)
-      .set('size', `${pageSize}`)
-      .set('projectId', `${projectId}`);
-    return this.http.get<Page<Task>>(tasksURI, {params});
+      .set('size', `${pageSize}`);
+    return this.http.get<Page<Task>>(`${projectsURI}/${projectId}/tasks`, {params});
   }
 
   updateTask(task: Task): Observable<Task> {
     task.priority.id = null;
     task.status.id = null;
-    return this.http.put<Task>(`${tasksURI}/${task.id}`, task).pipe(
-      map(this.processTaskDates)
-    );
+    return this.http.put<Task>(`${projectsURI}/${task.project.id}/tasks/${task.id}`, task);
   }
 
-  getTaskById(taskId: string): Observable<Task> {
-    return this.http.get<Task>(`${tasksURI}/${taskId}`).pipe(
+  getTask(projectId: string, taskId: string): Observable<Task> {
+    return this.http.get<Task>(`${projectsURI}/${projectId}/tasks/${taskId}`).pipe(
       map((v: Task) => this.processTaskDates(v))
     );
   }

@@ -24,6 +24,11 @@ public class UserController {
         return userService.findAll();
     }
 
+    @GetMapping(params = "roles")
+    public Iterable<User> findAllUsersWithRoles(@RequestParam(name = "roles") List<String> roles) {
+        return userService.findAllWithRoles(roles);
+    }
+
     @GetMapping(params = "email")
     public User findUserByEmail(@RequestParam(name = "email") String email) {
         return userService.findByEmail(email).get();

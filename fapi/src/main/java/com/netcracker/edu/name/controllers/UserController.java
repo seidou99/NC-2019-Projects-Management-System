@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -30,10 +32,8 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @Secured("Admin")
     @PostMapping(value = "/users")
     public ResponseEntity register(@RequestBody User user) {
-        System.out.println(SecurityContextHolder.getContext().getAuthentication());
         this.userService.save(user);
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -47,7 +47,6 @@ public class UserController {
                 )
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        System.out.println(authentication);
         String token = tokenProvider.generateToken(authentication);
         return ResponseEntity.ok(new AuthToken(token));
     }
@@ -55,5 +54,10 @@ public class UserController {
     @GetMapping(value = "/users")
     public Iterable<User> findAllUsers() {
         return userService.findAll();
+    }
+
+    @GetMapping(value = "/users", params = "roles")
+    public Iterable<User> findAllUsersWithRoles(@RequestParam(name = "roles") List<String> roles) {
+        return userService.findAllWithRoles(roles);
     }
 }

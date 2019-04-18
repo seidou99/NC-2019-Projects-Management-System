@@ -21,7 +21,7 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'tasks/:taskId',
+    path: 'projects/:projectId/tasks/:taskId',
     component: TaskDashboardComponent,
     canActivate: [RoleGuard],
     data: {

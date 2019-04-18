@@ -27,18 +27,24 @@ export class TaskDashboardComponent implements OnInit {
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('taskId');
-    this.taskService.getTaskById(taskId).subscribe((task: Task) => {
+    const projectId = this.route.snapshot.paramMap.get('taskId');
+    this.taskService.getTask(projectId, taskId).subscribe((task: Task) => {
       this.task = task;
       this.task$.next(task);
       this.taskName = `${task.project.code}-${task.code}`;
     }, (e: Error) => console.log(e));
-    this.commentService.getAllCommentsByTaskId(taskId).subscribe((comments: Comment[]) => this.comments = comments,
+    this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => this.comments = comments,
       (e: Error) => console.log(e));
   }
 
   submitComment(comment: Comment) {
-    this.commentService.createComment(comment, this.route.snapshot.paramMap.get('taskId')).subscribe(
+    const taskId = this.route.snapshot.paramMap.get('taskId');
+    const projectId = this.route.snapshot.paramMap.get('taskId');
+    this.commentService.createComment(projectId, taskId, comment).subscribe(
       () => {
+        this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => {
+          this.comments = comments;
+        });
       }, (e: Error) => console.log(e));
   }
 

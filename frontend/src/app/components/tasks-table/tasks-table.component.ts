@@ -2,15 +2,16 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 import {Task} from '../../models/task';
 import {TaskPriority} from '../../models/task-priority';
 import {TaskStatus} from '../../models/task-status';
+import {Observable} from 'rxjs/internal/Observable';
 
 @Component({
   selector: 'app-tasks-table',
   templateUrl: './tasks-table.component.html',
   styleUrls: ['./tasks-table.component.css']
 })
-export class TasksTableComponent implements OnChanges {
+export class TasksTableComponent implements OnInit, OnChanges {
 
-  @Input() tasks: Task[];
+  @Input() page$: Observable<Task[]>;
   @Input() pageNumber: number;
   @Input() pageSize: number;
   @Input() recordsAmount: number;
@@ -23,6 +24,9 @@ export class TasksTableComponent implements OnChanges {
   buttons = [];
 
   constructor() {
+  }
+
+  ngOnInit(): void {
   }
 
   ngOnChanges(changes: SimpleChanges): void {

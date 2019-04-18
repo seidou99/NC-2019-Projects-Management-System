@@ -9,6 +9,8 @@ public interface UserService {
 
     Iterable<User> findAll();
 
+    Iterable<User> findAllWithRoles(List<String> roles);
+
     Optional<User> findByEmail(String email);
 
     Optional<User> findById(Long id);

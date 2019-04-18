@@ -14,7 +14,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let task of tasks" (click)="taskRowClick.emit(task.id)">
+    <tr *ngFor="let task of page$ | async" (click)="taskRowClick.emit(task.id)">
       <td class="nowrap">{{task.project.code}}-{{task.code}}</td>
       <td>{{task.priority.name}}</td>
       <td>{{task.status.name}}</td>

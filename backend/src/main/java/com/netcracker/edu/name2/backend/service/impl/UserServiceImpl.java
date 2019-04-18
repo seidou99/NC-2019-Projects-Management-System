@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Iterable<User> findAllWithRoles(List<String> roles) {
+        return userRepository.findAllWithRoles(roles);
+    }
+
+    @Override
     public Optional<User> findByEmail(String email) {
         Optional<User> result = Optional.empty();
         Optional<UserAuthData> userAuthData = userAuthDataRepository.findByEmail(email);
@@ -56,19 +62,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User save(User user) {
-        User result = null;
         user.getAuthData().setId(null);
         user.setId(null);
         String roleName = user.getRole().getName();
         Optional<UserRole> role = userRoleRepository.findByName(roleName);
-        if (role.isPresent()) {
-            user.setRole(role.get());
-            String passwordHash = encoder().encode(user.getAuthData().getPassword());
-            user.getAuthData().setPassword(passwordHash);
-            userAuthDataRepository.save(user.getAuthData());
-            result = userRepository.save(user);
-        }
-        return result;
+        user.setRole(role.get());
+        String passwordHash = encoder().encode(user.getAuthData().getPassword());
+        user.getAuthData().setPassword(passwordHash);
+        userAuthDataRepository.save(user.getAuthData());
+        return userRepository.save(user);
     }
 
     @Override

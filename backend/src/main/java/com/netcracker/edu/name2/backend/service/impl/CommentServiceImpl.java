@@ -39,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
             return null;
         }
         comment.setTask(task.get());
-        Optional<User> author = userService.findById(comment.getAuthor().getId());
+        Optional<User> author = userService.findByEmail(comment.getAuthor().getAuthData().getEmail());
         if (!author.isPresent()) {
             return null;
         }

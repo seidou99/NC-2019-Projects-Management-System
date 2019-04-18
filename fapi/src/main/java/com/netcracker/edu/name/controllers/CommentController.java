@@ -18,14 +18,14 @@ public class CommentController {
     private RestTemplate restTemplate;
 
     @GetMapping
-    public ResponseEntity findAll(@PathVariable(name = "taskId") Long taskId) {
-        String data = restTemplate.getForObject(config.getTasksUri() + "/" + taskId + "/comments", String.class);
+    public ResponseEntity findAll(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId) {
+        String data = restTemplate.getForObject(config.getProjectsUri() + "/" + projectId + "/tasks/" + taskId + "/comments", String.class);
         return ResponseEntity.ok(data);
     }
 
     @PostMapping
-    public ResponseEntity createComment(@RequestBody Object comment, @PathVariable("taskId") Long taskId) {
-        restTemplate.postForObject(config.getTasksUri() + "/" + taskId + "/comments", comment, String.class);
+    public ResponseEntity createComment(@RequestBody Object comment, @PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId) {
+        restTemplate.postForObject(config.getProjectsUri() + "/" + projectId + "/tasks/" + taskId + "/comments", comment, String.class);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 }
