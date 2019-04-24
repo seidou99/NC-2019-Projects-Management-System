@@ -17,10 +17,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByAuthData(UserAuthData authData);
 
-    Optional<User> findByAuthDataEmail(String email);
-
-    Iterable<User> findAllByRoleIn(UserRole[] roles);
-
     @Query("select u from User u where u.role.name in :roles")
     Iterable<User> findAllWithRoles(@Param("roles") List<String> roles);
 }

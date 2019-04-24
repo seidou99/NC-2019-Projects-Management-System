@@ -19,12 +19,40 @@ public class TaskController {
     private Config config;
 
     @GetMapping(params = {"page", "size"})
-    public ResponseEntity getTasksPage(@PathVariable("projectId") Long projectId, @RequestParam("page") int page, @RequestParam("size") int size) {
+    public ResponseEntity getTasksPageByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+                                                  @RequestParam("size") int size) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromHttpUrl(config.getProjectsUri() + "/" + projectId + "/tasks")
                 .queryParam("page", page)
                 .queryParam("size", size);
-        return ResponseEntity.ok(restTemplate.getForObject(uriBuilder.toUriString(), String.class));
+        return ResponseEntity.ok(getTasksPage(projectId, page, size, null, null));
+    }
+
+    @GetMapping(params = {"page", "size", "assigneeEmail"})
+    public ResponseEntity getTasksPageByProjectIdAndAssigneeEmail(@PathVariable("projectId") Long projectId,
+                                                                  @RequestParam("page") int page,
+                                                                  @RequestParam("size") int size,
+                                                                  @RequestParam("assigneeEmail") String assigneeEmail) {
+        return ResponseEntity.ok(getTasksPage(projectId, page, size, "assigneeEmail", assigneeEmail));
+    }
+
+    @GetMapping(params = {"page", "size", "reporterEmail"})
+    public ResponseEntity getTasksPageByProjectIdAndReporterEmail(@PathVariable("projectId") Long projectId,
+                                                                  @RequestParam("page") int page,
+                                                                  @RequestParam("size") int size,
+                                                                  @RequestParam("reporterEmail") String reporterEmail) {
+        return ResponseEntity.ok(getTasksPage(projectId, page, size, "reporterEmail", reporterEmail));
+    }
+
+    private String getTasksPage(Long projectId, int page, int size, String userEmailParamName, String userEmail) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromHttpUrl(config.getProjectsUri() + "/" + projectId + "/tasks")
+                .queryParam("page", page)
+                .queryParam("size", size);
+        if (userEmail != null) {
+            uriBuilder.queryParam(userEmailParamName, userEmail);
+        }
+        return restTemplate.getForObject(uriBuilder.toUriString(), String.class);
     }
 
     @PostMapping

@@ -2,6 +2,7 @@ package com.netcracker.edu.name2.backend.repository;
 
 import com.netcracker.edu.name2.backend.entity.Project;
 import com.netcracker.edu.name2.backend.entity.Task;
+import com.netcracker.edu.name2.backend.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Long countTasksWithProjectId(Long projectId);
 
     Page<Task> findAllByProject(Project project, Pageable pageable);
+
+    Page<Task> findAllByProjectAndReporter(Project project, User reporter, Pageable pageable);
+
+    Page<Task> findAllByProjectAndAssignee(Project project, User assignee, Pageable pageable);
 }

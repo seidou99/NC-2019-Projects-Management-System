@@ -24,8 +24,20 @@ public class TaskController {
     }
 
     @GetMapping(params = {"page", "size"})
-    public Page<Task> getAllTasksByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page, @RequestParam("size") int size) {
-        return this.taskService.getTasksPage(projectId, page, size);
+    public Page<Task> getTasksPageByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page, @RequestParam("size") int size) {
+        return this.taskService.getTasksPageByProjectId(projectId, page, size);
+    }
+
+    @GetMapping(params = {"page", "size", "reporterEmail"})
+    public Page<Task> getTasksPageByProjectIdAndReporterEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+                                             @RequestParam("size") int size, @RequestParam("reporterEmail") String reporterEmail) {
+        return this.taskService.getTasksPageByProjectIdAndReporterEmail(projectId, reporterEmail, page, size);
+    }
+
+    @GetMapping(params = {"page", "size", "assigneeEmail"})
+    public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+                                             @RequestParam("size") int size, @RequestParam("assigneeEmail") String assigneeEmail) {
+        return this.taskService.getTasksPageByProjectIdAndAssigneeEmail(projectId, assigneeEmail, page, size);
     }
 
     @PostMapping

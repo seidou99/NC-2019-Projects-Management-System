@@ -77,15 +77,38 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> getTasksPage(Long id, int pageNumber, int pageSize) {
-        Project project = projectService.findById(id).get();
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return taskRepository.findAllByProject(project, pageable);
+    public Page<Task> getTasksPageByProjectId(Long id, int pageNumber, int pageSize) {
+        Optional<Project> project = projectService.findById(id);
+        if (project.isPresent()) {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            return taskRepository.findAllByProject(project.get(), pageable);
+        } else {
+            return Page.empty();
+        }
     }
 
     @Override
-    public Long countTasksWithProjectId(Long projectId) {
-        return taskRepository.countTasksWithProjectId(projectId);
+    public Page<Task> getTasksPageByProjectIdAndReporterEmail(Long projectId, String reporterEmail, int pageNumber, int pageSize) {
+        Optional<Project> project = projectService.findById(projectId);
+        Optional<User> reporter = userService.findByEmail(reporterEmail);
+        if (project.isPresent() && reporter.isPresent()) {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            return taskRepository.findAllByProjectAndReporter(project.get(), reporter.get(), pageable);
+        } else {
+            return Page.empty();
+        }
+    }
+
+    @Override
+    public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(Long projectId, String assigneeEmail, int pageNumber, int pageSize) {
+        Optional<Project> project = projectService.findById(projectId);
+        Optional<User> assignee = userService.findByEmail(assigneeEmail);
+        if (project.isPresent() && assignee.isPresent()) {
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            return taskRepository.findAllByProjectAndAssignee(project.get(), assignee.get(), pageable);
+        } else {
+            return Page.empty();
+        }
     }
 
     @Override

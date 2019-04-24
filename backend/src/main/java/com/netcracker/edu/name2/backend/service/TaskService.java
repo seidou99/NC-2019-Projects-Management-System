@@ -18,7 +18,9 @@ public interface TaskService {
 
     Task update(Task task);
 
-    Page<Task> getTasksPage(Long id, int pageNumber, int pageSize);
+    Page<Task> getTasksPageByProjectId(Long id, int pageNumber, int pageSize);
 
-    Long countTasksWithProjectId(Long projectId);
+    Page<Task> getTasksPageByProjectIdAndReporterEmail(Long projectId, String reporterEmail, int pageNumber, int pageSize);
+
+    Page<Task> getTasksPageByProjectIdAndAssigneeEmail(Long projectId, String assigneeEmail, int pageNumber, int pageSize);
 }
