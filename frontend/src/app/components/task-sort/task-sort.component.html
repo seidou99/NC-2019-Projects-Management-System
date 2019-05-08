@@ -1,0 +1,14 @@
+<form [formGroup]="sortForm">
+  <div class="form-group">
+    <label>Sort by</label>
+    <select class="form-control" formControlName="sort">
+      <option *ngFor="let sort of availableSorts">{{sort}}</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Order by</label>
+    <select class="form-control" formControlName="order">
+      <option *ngFor="let order of availableOrders">{{order}}</option>
+    </select>
+  </div>
+</form>

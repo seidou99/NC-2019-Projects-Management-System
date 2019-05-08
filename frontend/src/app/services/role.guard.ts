@@ -17,6 +17,7 @@ export class RoleGuard implements CanActivate {
     let actualRole: UserRole;
     try {
       actualRole = this.auth.getUserRole();
+      console.log(actualRole);
     } catch (_) {
       this.auth.logout();
       this.router.navigate(['login'], {state: {reason: 'You need to log in'}});

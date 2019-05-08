@@ -1,3 +1,15 @@
+<!--<div class="d-flex flex-column h-100">-->
+<!--  <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"-->
+<!--                   (createUserClick)="openNewUserModal()" (logoutClick)="logout()"-->
+<!--                   [isNewProjectAvailable]="isNewProjectAvailable()"-->
+<!--                   [isNewUserAvailable]="isNewUserAvailable()"-->
+<!--                   [isNewTaskAvailable]="isNewTaskAvailable()">-->
+<!--  </app-home-navbar>-->
+<!--  <div style="flex-grow: 2;">-->
+
+<!--  </div>-->
+
+<!--</div>-->
 <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"
                  (createUserClick)="openNewUserModal()" (logoutClick)="logout()"
                  [isNewProjectAvailable]="isNewProjectAvailable()"
@@ -5,8 +17,15 @@
                  [isNewTaskAvailable]="isNewTaskAvailable()">
 </app-home-navbar>
 
+<ngb-alert [type]="alert.type" *ngIf="alert.message" (close)="alert.message = ''">{{alert.message}}</ngb-alert>
+
 <div class="wrapper p-2 mt-5" *ngIf="authService.getUserRole() !== UserRole.ADMIN">
   <div class="container-fluid">
+    <div class="row justify-content-between">
+      <app-change-task-type [initialState$]="initialTaskTypes$"
+                            (stateChange)="taskTypesChange($event)"></app-change-task-type>
+      <app-task-sort [initialState$]="initialTaskSort$" (stateChange)="taskSortChange($event)"></app-task-sort>
+    </div>
     <div class="row">
       <div class="col-2 pl-2">
         <app-projects [projects]="projects" (projectChangeEmitter)="projectChange($event)"

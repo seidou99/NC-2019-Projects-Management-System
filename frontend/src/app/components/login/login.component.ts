@@ -39,6 +39,13 @@ export class LoginComponent implements OnInit {
     state$.subscribe((state: any) => {
       this.errorText = state.reason;
     });
+    const credentials = this.authService.getUserCredentials();
+    if (credentials) {
+      this.loginForm.patchValue({
+        email: credentials.email,
+        password: credentials.password
+      });
+    }
   }
 
   submitForm() {
@@ -46,6 +53,7 @@ export class LoginComponent implements OnInit {
     const rememberPassword: boolean = formValue.rememberPassword;
     const credentials = new UserAuthData(formValue.email, formValue.password);
     this.authService.login(credentials, rememberPassword).subscribe(() => {
+      console.log('in callback');
       this.router.navigate(['']);
     }, (e: HttpErrorResponse) => {
       console.log(e);

@@ -1,11 +1,9 @@
 package com.netcracker.edu.name.service.impl;
 
-import com.netcracker.edu.name.config.Config;
-import com.netcracker.edu.name.models.User;
+import com.netcracker.edu.name.property.BackendApiProperties;
+import com.netcracker.edu.name.model.User;
 import com.netcracker.edu.name.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,28 +23,28 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     private RestTemplate restTemplate;
 
     @Autowired
-    private Config config;
+    private BackendApiProperties backendApiProperties;
 
     @Override
     public User findByEmail(String email) {
-        return restTemplate.getForObject(config.getUsersUri() + "?email=" + email, User.class);
+        return restTemplate.getForObject(backendApiProperties.getUsersUri() + "?email=" + email, User.class);
     }
 
     @Override
     public User save(User user) {
-        return restTemplate.postForObject(config.getUsersUri(), user, User.class);
+        return restTemplate.postForObject(backendApiProperties.getUsersUri(), user, User.class);
     }
 
     @Override
     public Iterable<User> findAll() {
-        User[] users = restTemplate.getForObject(config.getUsersUri(), User[].class);
+        User[] users = restTemplate.getForObject(backendApiProperties.getUsersUri(), User[].class);
         return Arrays.asList(users);
     }
 
     @Override
     public Iterable<User> findAllWithRoles(List<String> roles) {
         UriComponentsBuilder uri = UriComponentsBuilder
-                .fromHttpUrl(config.getUsersUri());
+                .fromHttpUrl(backendApiProperties.getUsersUri());
         for (String role : roles) {
             uri.queryParam("roles", role);
         }

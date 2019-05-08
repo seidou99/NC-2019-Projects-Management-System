@@ -13,5 +13,9 @@ public interface ProjectService {
 
     Project save(Project project);
 
+    Iterable<Project> findAllUserReported(Long reporterId);
+
+    Iterable<Project> findAllUserAssigned(Long assigneeId);
+
     void delete(Long id);
 }

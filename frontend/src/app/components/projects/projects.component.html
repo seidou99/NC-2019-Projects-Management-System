@@ -1,12 +1,14 @@
-<div class="list-group mt-2">
+<div class="list-group mt-2 mh-600px">
   <div class="list-group-item list-group-item-success pb-1">
     <h5>
       Projects
     </h5>
   </div>
-  <button class="list-group-item break-word" *ngFor="let project of projects"
-          [ngClass]="project.id === selectedProjectId ? 'list-group-item-info' : 'list-group-item-action'"
-          (click)="changeProject(project.id)">
-    {{project.code}}<br>({{project.summary}})
-  </button>
+  <div style="overflow: auto">
+    <button class="list-group-item break-word" *ngFor="let project of projects"
+            [ngClass]="project.id === selectedProjectId ? 'list-group-item-info' : 'list-group-item-action'"
+            (click)="changeProject(project.id)">
+      {{project.code}}<br>({{project.summary}})
+    </button>
+  </div>
 </div>

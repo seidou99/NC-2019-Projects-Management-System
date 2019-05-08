@@ -22,6 +22,11 @@ import {TaskDashboardEditComponent} from './components/task-dashboard-edit/task-
 import {ProjectsComponent} from './components/projects/projects.component';
 import {TokenInterceptor} from './interceptors/token.interceptor';
 import {ErrorInterceptor} from './interceptors/error.interceptor';
+import { ChangeTaskTypeComponent } from './components/change-task-type/change-task-type.component';
+import { TaskSortComponent } from './components/task-sort/task-sort.component';
+import {NgxSpinnerModule} from "ngx-spinner";
+import {Ng4LoadingSpinnerModule} from "ng4-loading-spinner";
+import { TaskDashboardAttachmentsComponent } from './components/task-dashboard-attachments/task-dashboard-attachments.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +42,10 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     TaskDashboardNavbarComponent,
     TaskDashboardCommentsComponent,
     TaskDashboardEditComponent,
-    ProjectsComponent
+    ProjectsComponent,
+    ChangeTaskTypeComponent,
+    TaskSortComponent,
+    TaskDashboardAttachmentsComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +54,8 @@ import {ErrorInterceptor} from './interceptors/error.interceptor';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    Ng4LoadingSpinnerModule.forRoot()
   ],
   providers: [
     DatePipe,

@@ -3,7 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {TaskStatus} from '../../models/task-status';
 import {TaskPriority} from '../../models/task-priority';
 import {Task} from '../../models/task';
-import {getNextDay, minDateValidator} from '../../util/date';
+import {minDateValidator} from '../../util/date';
 import {Observable, Subject} from 'rxjs';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {User} from '../../models/user';
@@ -32,14 +32,13 @@ export class TaskDashboardEditComponent implements OnInit {
   availablePriority = [];
   assignees: User[] = [];
   assigneeSearch;
-  reporterSearch;
   hasError: HasErrorFunction;
   validationConfigs = validationConfigs;
   minDueDate: string;
   task: Task;
 
   constructor(private formBuilder: FormBuilder, private userService: UserService, private datePipe: DatePipe) {
-    this.minDueDate = datePipe.transform(getNextDay(), 'yyyy-MM-dd');
+    this.minDueDate = datePipe.transform(new Date(), 'yyyy-MM-dd');
     this.taskForm = this.formBuilder.group({
       priority: new FormControl('', [Validators.required]),
       status: new FormControl('', [Validators.required]),
@@ -60,7 +59,7 @@ export class TaskDashboardEditComponent implements OnInit {
       created: new FormControl(''),
       dueDate: new FormControl('', [
         Validators.required,
-        minDateValidator(getNextDay())
+        minDateValidator(new Date())
       ]),
       updated: new FormControl(''),
       resolved: new FormControl(''),
@@ -83,7 +82,7 @@ export class TaskDashboardEditComponent implements OnInit {
   }
 
   private loadData() {
-    this.userService.getAllUsersByRole([UserRole.QA, UserRole.DEVELOPER]).subscribe((assignees: User[]) => {
+    this.userService.getAllUsersByRole([UserRole.QA, UserRole.DEVELOPER, UserRole.PROJECT_MANAGER]).subscribe((assignees: User[]) => {
       this.assignees.splice(0, this.assignees.length);
       assignees.forEach((assignee: User) => this.assignees.push(assignee));
     }, (e: Error) => console.log(e));
@@ -96,8 +95,11 @@ export class TaskDashboardEditComponent implements OnInit {
       } else {
         const allowedToEdit = ['priority', 'status', 'description', 'assignee', 'estimation', 'dueDate'];
         allowedToEdit.forEach((v: string) => {
-          this.taskForm.get(v).enable();
+          const control = this.taskForm.get(v);
+          control.enable();
+          control.markAsDirty();
         });
+
       }
     }, (e: Error) => console.log(e));
   }

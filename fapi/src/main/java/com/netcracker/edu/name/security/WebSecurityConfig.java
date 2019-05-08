@@ -58,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/login").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users").hasAuthority("Admin")
                 .antMatchers(HttpMethod.POST, "/api/projects").hasAuthority("Project manager")
                 .antMatchers("/api/*").hasAnyAuthority("Project manager", "Developer", "QA")

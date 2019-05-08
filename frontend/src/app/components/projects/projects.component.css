@@ -10,6 +10,6 @@ button:focus {
   text-align: inherit;
 }
 
-.break-word {
-  word-break: break-word;
+.list-group-item {
+  width: 100%;
 }

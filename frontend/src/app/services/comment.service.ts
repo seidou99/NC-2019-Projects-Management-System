@@ -19,7 +19,7 @@ export class CommentService {
   }
 
   createComment(projectId: string, taskId: string, comment: Comment): Observable<any> {
-    comment.author = new User(null, null, this.authService.getUserRole(), this.authService.getUserEmail(), null);
+    comment.author = {id: this.authService.getUserId()} as User;
     return this.http.post(`${projectsURI}/${projectId}/tasks/${taskId}/comments`, comment);
   }
 }

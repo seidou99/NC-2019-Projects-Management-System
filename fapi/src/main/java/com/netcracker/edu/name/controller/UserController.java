@@ -1,19 +1,19 @@
-package com.netcracker.edu.name.controllers;
+package com.netcracker.edu.name.controller;
 
-import com.netcracker.edu.name.models.AuthToken;
-import com.netcracker.edu.name.models.User;
-import com.netcracker.edu.name.models.UserAuthData;
+import com.netcracker.edu.name.model.AuthToken;
+import com.netcracker.edu.name.model.User;
+import com.netcracker.edu.name.model.UserAuthData;
 import com.netcracker.edu.name.security.TokenProvider;
 import com.netcracker.edu.name.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 
@@ -32,10 +32,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "/users")
+    @PostMapping(value = "/users", produces = "application/json")
     public ResponseEntity register(@RequestBody User user) {
-        this.userService.save(user);
-        return new ResponseEntity(HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<User>(this.userService.save(user), HttpStatus.CREATED);
+        } catch (HttpServerErrorException e) {
+            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
+        }
     }
 
     @PostMapping(value = "/login")

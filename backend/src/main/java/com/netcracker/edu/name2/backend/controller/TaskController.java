@@ -23,21 +23,25 @@ public class TaskController {
         return taskService.findAll();
     }
 
-    @GetMapping(params = {"page", "size"})
-    public Page<Task> getTasksPageByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page, @RequestParam("size") int size) {
-        return this.taskService.getTasksPageByProjectId(projectId, page, size);
+    @GetMapping(params = {"page", "size", "sortBy", "orderBy"})
+    public Page<Task> getTasksPageByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+                                              @RequestParam("size") int size, @RequestParam("sortBy") String sortBy,
+                                              @RequestParam("orderBy") String orderBy) {
+        return this.taskService.getTasksPageByProjectId(projectId, page, size, sortBy, orderBy);
     }
 
-    @GetMapping(params = {"page", "size", "reporterEmail"})
+    @GetMapping(params = {"page", "size", "sortBy", "orderBy", "reporterId"})
     public Page<Task> getTasksPageByProjectIdAndReporterEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
-                                             @RequestParam("size") int size, @RequestParam("reporterEmail") String reporterEmail) {
-        return this.taskService.getTasksPageByProjectIdAndReporterEmail(projectId, reporterEmail, page, size);
+                                                              @RequestParam("size") int size,
+                                                              @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("reporterId") Long reporterId) {
+        return this.taskService.getTasksPageByProjectIdAndReporterId(projectId, reporterId, page, size, sortBy, orderBy);
     }
 
-    @GetMapping(params = {"page", "size", "assigneeEmail"})
+    @GetMapping(params = {"page", "size", "sortBy", "orderBy", "assigneeId"})
     public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
-                                             @RequestParam("size") int size, @RequestParam("assigneeEmail") String assigneeEmail) {
-        return this.taskService.getTasksPageByProjectIdAndAssigneeEmail(projectId, assigneeEmail, page, size);
+                                                              @RequestParam("size") int size,
+                                                              @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("assigneeId") Long assigneeId) {
+        return this.taskService.getTasksPageByProjectIdAndAssigneeId(projectId, assigneeId, page, size, sortBy, orderBy);
     }
 
     @PostMapping

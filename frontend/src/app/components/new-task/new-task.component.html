@@ -23,7 +23,7 @@
 
       <div class="form-group">
         <label>Description</label>
-        <input type="text" class="form-control" formControlName="description">
+        <textarea type="text" class="form-control" formControlName="description"></textarea>
         <div class="alert alert-danger mt-2" *ngIf="hasError('description', 'required')">
           Task description is required
         </div>
@@ -54,7 +54,7 @@
 
       <div class="form-group">
         <label>Due Date</label>
-        <input type="date" class="form-control" formControlName="dueDate" min="{{minDueDate}}">
+        <input type="date" class="form-control" formControlName="dueDate">
         <div class="alert alert-danger mt-2" *ngIf="hasError('dueDate', 'required')">
           Due date is required
         </div>
@@ -80,3 +80,4 @@
     <button class="btn btn-success" [disabled]="!newTaskForm.valid">Create</button>
   </div>
 </form>
+<ng4-loading-spinner [loadingText]="'Loading...'"></ng4-loading-spinner>

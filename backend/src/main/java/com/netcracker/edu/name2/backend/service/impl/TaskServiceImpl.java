@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -39,8 +40,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Optional<Task> findById(Long id) {
-        Optional<Task> optTask = taskRepository.findById(id);
-        return optTask;
+        return taskRepository.findById(id);
     }
 
     @Override
@@ -52,11 +52,8 @@ public class TaskServiceImpl implements TaskService {
         task.setStatus(openStatus.get());
         task.setCreated(new Date());
         task.setCode(taskRepository.countTasksWithProjectId(task.getProject().getId()) + 1);
-//        task.setReporter(userService.findById(task.getReporter().getId()).get());
-        task.setReporter(userService.findByEmail(task.getReporter().getAuthData().getEmail()).get());
-        if (task.getAssignee() == null) {
-            task.setAssignee(task.getReporter());
-        }
+        task.setReporter(userService.findById(task.getReporter().getId()).get());
+        task.setAssignee(userService.findById(task.getAssignee().getId()).get());
         taskRepository.save(task);
         return task;
     }
@@ -68,19 +65,27 @@ public class TaskServiceImpl implements TaskService {
         task.setAssignee(userService.findById(task.getAssignee().getId()).get());
         task.setReporter(userService.findById(task.getReporter().getId()).get());
         task.setUpdated(new Date());
-        if (task.getStatus().getName() == "Resolved") {
+        if (task.getStatus().getName().equals("Resolved")) {
             task.setResolved(new Date());
-        } else if (task.getStatus().getName() == "Closed") {
+        } else if (task.getStatus().getName().equals("Closed")) {
             task.setClosed(new Date());
         }
         return taskRepository.save(task);
     }
 
+    private Sort getSort(String sort, String order) {
+        Sort.Direction direction = Sort.Direction.fromString(order);
+        if (sort.equals("task")) {
+            sort = "code";
+        }
+        return Sort.by(direction, sort);
+    }
+
     @Override
-    public Page<Task> getTasksPageByProjectId(Long id, int pageNumber, int pageSize) {
-        Optional<Project> project = projectService.findById(id);
+    public Page<Task> getTasksPageByProjectId(Long projectId, int pageNumber, int pageSize, String sortBy, String orderBy) {
+        Optional<Project> project = projectService.findById(projectId);
         if (project.isPresent()) {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, getSort(sortBy, orderBy));
             return taskRepository.findAllByProject(project.get(), pageable);
         } else {
             return Page.empty();
@@ -88,11 +93,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> getTasksPageByProjectIdAndReporterEmail(Long projectId, String reporterEmail, int pageNumber, int pageSize) {
+    public Page<Task> getTasksPageByProjectIdAndReporterId(Long projectId, Long reporterId, int pageNumber, int pageSize, String sortBy, String orderBy) {
         Optional<Project> project = projectService.findById(projectId);
-        Optional<User> reporter = userService.findByEmail(reporterEmail);
+        Optional<User> reporter = userService.findById(reporterId);
         if (project.isPresent() && reporter.isPresent()) {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, getSort(sortBy, orderBy));
             return taskRepository.findAllByProjectAndReporter(project.get(), reporter.get(), pageable);
         } else {
             return Page.empty();
@@ -100,11 +105,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(Long projectId, String assigneeEmail, int pageNumber, int pageSize) {
+    public Page<Task> getTasksPageByProjectIdAndAssigneeId(Long projectId, Long assigneeId, int pageNumber, int pageSize, String sortBy, String orderBy) {
         Optional<Project> project = projectService.findById(projectId);
-        Optional<User> assignee = userService.findByEmail(assigneeEmail);
+        Optional<User> assignee = userService.findById(assigneeId);
         if (project.isPresent() && assignee.isPresent()) {
-            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            Pageable pageable = PageRequest.of(pageNumber, pageSize, getSort(sortBy, orderBy));
             return taskRepository.findAllByProjectAndAssignee(project.get(), assignee.get(), pageable);
         } else {
             return Page.empty();

@@ -35,7 +35,7 @@ public class UserAuthData {
         this.email = email;
     }
 
-    //    @JsonIgnore
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

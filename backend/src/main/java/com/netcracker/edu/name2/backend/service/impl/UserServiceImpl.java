@@ -6,11 +6,14 @@ import com.netcracker.edu.name2.backend.entity.UserRole;
 import com.netcracker.edu.name2.backend.repository.UserAuthDataRepository;
 import com.netcracker.edu.name2.backend.repository.UserRepository;
 import com.netcracker.edu.name2.backend.repository.UserRoleRepository;
+import com.netcracker.edu.name2.backend.service.UserAuthDataService;
 import com.netcracker.edu.name2.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +22,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
-    private UserAuthDataRepository userAuthDataRepository;
+    private UserAuthDataService userAuthDataService;
     private UserRoleRepository userRoleRepository;
 
     @Bean
@@ -28,10 +31,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Autowired
-    UserServiceImpl(UserRepository userRepository, UserAuthDataRepository userAuthDataRepository,
+    UserServiceImpl(UserRepository userRepository, UserAuthDataService userAuthDataService,
                     UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
-        this.userAuthDataRepository = userAuthDataRepository;
+        this.userAuthDataService = userAuthDataService;
         this.userRoleRepository = userRoleRepository;
     }
 
@@ -48,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String email) {
         Optional<User> result = Optional.empty();
-        Optional<UserAuthData> userAuthData = userAuthDataRepository.findByEmail(email);
+        Optional<UserAuthData> userAuthData = userAuthDataService.findByEmail(email);
         if (userAuthData.isPresent()) {
             result = userRepository.findByAuthData(userAuthData.get());
         }
@@ -69,7 +72,12 @@ public class UserServiceImpl implements UserService {
         user.setRole(role.get());
         String passwordHash = encoder().encode(user.getAuthData().getPassword());
         user.getAuthData().setPassword(passwordHash);
-        userAuthDataRepository.save(user.getAuthData());
+        if (userAuthDataService.findByEmail(user.getAuthData().getEmail()).isPresent()) {
+            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "User with email '" + user.getAuthData().getEmail() + "' already exists");
+//            throw new RuntimeException("User with email '" + user.getAuthData().getEmail() + "' already exists");
+        }
+        userAuthDataService.save(user.getAuthData());
         return userRepository.save(user);
     }
 

@@ -1,10 +1,10 @@
-package com.netcracker.edu.name.config;
+package com.netcracker.edu.name.property;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Config {
+public class BackendApiProperties {
 
     @Value("${backend.server.uri}")
     private String backendUri;

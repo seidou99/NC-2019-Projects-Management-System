@@ -1,6 +1,6 @@
 package com.netcracker.edu.name.service;
 
-import com.netcracker.edu.name.models.User;
+import com.netcracker.edu.name.model.User;
 
 import java.util.List;
 

@@ -13,8 +13,8 @@ import jwt_decode from 'jwt-decode';
 })
 export class AuthService {
 
-  private readonly tokenKey: string = 'token';
-  private token;
+  private readonly tokenKey: string = 'projects-management-token';
+  private readonly authDataKey: string = 'projects-management-auth-data';
 
   constructor(private http: HttpClient) {
   }
@@ -22,31 +22,32 @@ export class AuthService {
   login(credentials: UserAuthData, rememberPassword: boolean): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(loginURI, credentials).pipe(
       map((tokenResponse: TokenResponse) => {
-        localStorage.removeItem(this.tokenKey);
+        localStorage.setItem(this.tokenKey, tokenResponse.token);
+        console.log('token in local storage ', localStorage.getItem(this.tokenKey));
         if (rememberPassword) {
-          localStorage.setItem(this.tokenKey, tokenResponse.token);
+          localStorage.setItem(this.authDataKey, JSON.stringify(credentials));
+        } else {
+          localStorage.removeItem(this.authDataKey);
         }
-        console.log(localStorage.getItem(this.tokenKey));
-        this.token = tokenResponse.token;
         return tokenResponse;
       })
     );
   }
 
+  getUserCredentials(): UserAuthData {
+    return JSON.parse(localStorage.getItem(this.authDataKey)) as UserAuthData;
+  }
+
   logout() {
-    this.token = null;
     localStorage.removeItem(this.tokenKey);
   }
 
   private getTokenPayload(): any {
-    return jwt_decode(this.getToken());
+    return jwt_decode(localStorage.getItem(this.tokenKey));
   }
 
-  getToken() {
-    if (!this.token) {
-      this.token = localStorage.getItem(this.tokenKey);
-    }
-    return this.token;
+  public getToken(): string {
+    return localStorage.getItem(this.tokenKey);
   }
 
   isTokenNotExpired(): boolean {
@@ -54,10 +55,10 @@ export class AuthService {
   }
 
   getUserRole(): UserRole {
-    return this.getTokenPayload().scopes as UserRole;
+    return this.getTokenPayload().role as UserRole;
   }
 
-  getUserEmail(): string {
-    return this.getTokenPayload().sub as string;
+  getUserId(): number {
+    return +(this.getTokenPayload().jti as string);
   }
 }

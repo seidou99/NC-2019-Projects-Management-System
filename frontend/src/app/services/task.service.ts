@@ -7,6 +7,9 @@ import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';
 import {Page} from '../models/page';
 import {User} from '../models/user';
+import {TaskType} from '../models/task-type';
+import {TaskSortAndOrder} from '../models/task-sort-and-order';
+import {TaskSort} from '../models/task-sort';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +20,7 @@ export class TaskService {
   }
 
   createTask(task: Task): Observable<any> {
-    task.reporter = new User(null, null, this.authService.getUserRole(), this.authService.getUserEmail(), null);
+    task.reporter = {id: this.authService.getUserId()} as User;
     if (!task.assignee) {
       task.assignee = task.reporter;
     }
@@ -40,10 +43,27 @@ export class TaskService {
     return task;
   }
 
-  getTasksPage(projectId: string, pageNumber: number, pageSize: number): Observable<Page<Task>> {
-    const params = new HttpParams()
+  getTasksPage(projectId: string, pageNumber: number, pageSize: number, taskType: TaskType,
+               taskSort: TaskSortAndOrder): Observable<Page<Task>> {
+    const userId = '' + this.authService.getUserId();
+    let params = new HttpParams()
       .set('page', `${pageNumber - 1}`)
       .set('size', `${pageSize}`);
+    switch (taskType) {
+      case (TaskType.ASSIGNED) : {
+        params = params.set('assigneeId', '' + userId);
+        break;
+      }
+      case (TaskType.REPORTED) : {
+        params = params.set('reporterId', userId);
+      }
+    }
+    params = params
+      .set('sortBy', taskSort.sort)
+      .set('orderBy', taskSort.order);
+    if (taskSort.sort === TaskSort.DUE_DATE) {
+      params = params.set('sortBy', 'dueDate');
+    }
     return this.http.get<Page<Task>>(`${projectsURI}/${projectId}/tasks`, {params});
   }
 

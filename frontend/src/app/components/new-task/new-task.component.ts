@@ -12,8 +12,11 @@ import {User} from '../../models/user';
 import {Task} from '../../models/task';
 import {UserService} from '../../services/user.service';
 import {DatePipe} from '@angular/common';
-import {getNextDay, minDateValidator, transformDate} from '../../util/date';
+import {minDateValidator} from '../../util/date';
 import {projectMapper, search, userMapper, valueContainsValidator} from '../../util/typeahead';
+import {TaskType} from '../../models/task-type';
+import {NgxSpinnerService} from "ngx-spinner";
+import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
 
 @Component({
   selector: 'app-new-task',
@@ -35,11 +38,11 @@ export class NewTaskComponent implements OnInit {
   taskPriorities: string[] = [];
   projectCodeSearch;
   assigneeSearch;
-  developers: User[] = [];
-  minDueDate: string = transformDate(getNextDay());
+  assignees: User[] = [];
+  minDueDate: string = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
 
   constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private projectService: ProjectService,
-              private userService: UserService, private datePipe: DatePipe) {
+              private userService: UserService, private datePipe: DatePipe, private spinner: Ng4LoadingSpinnerService) {
     for (const priority in TaskPriority) {
       this.taskPriorities.push(TaskPriority[priority]);
     }
@@ -50,11 +53,11 @@ export class NewTaskComponent implements OnInit {
       description: new FormControl('', [Validators.required, Validators.minLength(validationConfigs.taskDescription.minlength),
         Validators.maxLength(validationConfigs.taskDescription.maxlength)]),
       priority: new FormControl(this.taskPriorities[0], [Validators.required]),
-      dueDate: new FormControl(this.minDueDate, [Validators.required, minDateValidator(getNextDay())]),
+      dueDate: new FormControl(this.datePipe.transform(new Date(), 'yyyy-MM-dd'), [Validators.required, minDateValidator(new Date())]),
       estimation: new FormControl(validationConfigs.estimation.min, [Validators.required,
         Validators.min(validationConfigs.estimation.min)]),
       assignee: new FormControl('', {
-        validators: [valueContainsValidator(this.developers, userMapper)],
+        validators: [valueContainsValidator(this.assignees, userMapper)],
         updateOn: 'blur'
       })
     });
@@ -62,19 +65,22 @@ export class NewTaskComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.projectService.getAllProjects().subscribe(
+    this.spinner.show();
+    this.projectService.getAllProjects(TaskType.ALL).subscribe(
       (data: Project[]) => {
         data.forEach((value: Project) => this.projects.push(value));
+        this.spinner.hide();
       }, (e) => {
         console.log(e);
+        this.spinner.hide();
       }
     );
-    this.userService.getAllUsersByRole([UserRole.DEVELOPER, UserRole.QA]).subscribe((data: User[]) => {
-      data.forEach((u: User) => this.developers.push(u));
+    this.userService.getAllUsersByRole([UserRole.DEVELOPER, UserRole.QA, UserRole.PROJECT_MANAGER]).subscribe((data: User[]) => {
+      data.forEach((u: User) => this.assignees.push(u));
     }, (e) => console.log(e));
     this.projectCodeSearch = search<Project>(this.codeTypeahead, this.codeFocus$, this.codeClick$, this.projects, projectMapper);
     this.assigneeSearch = search<User>(this.assigneeTypeahead, this.assigneeFocus$, this.assigneeClick$,
-      this.developers, userMapper);
+      this.assignees, userMapper);
   }
 
   submitForm() {
@@ -82,7 +88,7 @@ export class NewTaskComponent implements OnInit {
     const project: Project = this.projects.filter((v: Project) => v.code === formValue.code)[0];
     let assignee: User = null;
     if (formValue.assignee.length) {
-      assignee = this.developers.filter((v: User) => userMapper(v) === formValue.assignee)[0];
+      assignee = this.assignees.filter((v: User) => userMapper(v) === formValue.assignee)[0];
     }
     const task = new Task(project, formValue.description, formValue.priority, new Date(formValue.dueDate), formValue.estimation, assignee);
     this.activeModal.close(task);

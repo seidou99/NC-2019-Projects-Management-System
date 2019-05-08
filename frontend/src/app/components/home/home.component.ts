@@ -13,8 +13,12 @@ import {TaskService} from '../../services/task.service';
 import {Page} from '../../models/page';
 import {AuthService} from '../../services/auth.service';
 import {UserRole} from '../../models/user-role';
-import {Subject} from 'rxjs/internal/Subject';
-import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
+import {BehaviorSubject} from 'rxjs/internal/BehaviorSubject';
+import {TaskType} from '../../models/task-type';
+import {TaskSort} from '../../models/task-sort';
+import {TaskOrder} from '../../models/task-order';
+import {TaskSortAndOrder} from '../../models/task-sort-and-order';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -24,19 +28,32 @@ import {BehaviorSubject} from "rxjs/internal/BehaviorSubject";
 export class HomeComponent implements OnInit {
 
   page$ = new BehaviorSubject<Task[]>([]);
+  taskType = TaskType.ALL;
+  taskSort: TaskSortAndOrder = {sort: TaskSort.TASK, order: TaskOrder.ASC};
+  initialTaskTypes$ = new BehaviorSubject<TaskType>(this.taskType);
+  initialTaskSort$ = new BehaviorSubject<TaskSortAndOrder>(this.taskSort);
   projects: Project[] = [];
   currentProjectId: number;
   pageNumber = 1;
-  pageSize = 20;
+  pageSize = 5;
   recordsAmount = 0;
   UserRole = UserRole;
+  alert = {
+    type: '',
+    message: '',
+    timer: 0,
+    showTime: 5000
+  };
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
               private router: Router, private taskService: TaskService, public authService: AuthService) {
   }
 
   ngOnInit() {
-    this.projectService.getAllProjects().subscribe((projects: Project[]) => {
+    if (this.authService.getUserRole() === UserRole.ADMIN) {
+      return;
+    }
+    this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (projects.length) {
         this.currentProjectId = projects[0].id;
@@ -45,17 +62,32 @@ export class HomeComponent implements OnInit {
     }, (e: Error) => console.log(e));
   }
 
-  loadProjects() {
-    this.projectService.getAllProjects().subscribe((projects: Project[]) => {
+  taskTypesChange(taskType: TaskType) {
+    this.taskType = taskType;
+    this.pageNumber = 1;
+    this.loadProjects(this.loadTasks.bind(this));
+  }
+
+  taskSortChange(taskSort: TaskSortAndOrder) {
+    this.taskSort = taskSort;
+    this.loadTasks();
+  }
+
+  loadProjects(afterLoadCallback: any) {
+    this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
+      if (afterLoadCallback) {
+        afterLoadCallback();
+      }
     }, (e: Error) => console.log(e));
   }
 
   loadTasks() {
-    this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber, this.pageSize).subscribe((data: Page<Task>) => {
-      this.page$.next(data.content);
-      this.recordsAmount = data.totalElements;
-    }, (e: Error) => console.log(e));
+    this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber, this.pageSize, this.taskType, this.taskSort)
+      .subscribe((data: Page<Task>) => {
+        this.page$.next(data.content);
+        this.recordsAmount = data.totalElements;
+      }, (e: Error) => console.log(e));
   }
 
   openNewProjectModal() {
@@ -63,7 +95,7 @@ export class HomeComponent implements OnInit {
     modalRef.result.then((project: Project) => {
       this.projectService.createProject(project).subscribe(
         () => {
-          this.loadProjects();
+          this.loadProjects(null);
         },
         (e) => {
           console.log(e);
@@ -78,18 +110,31 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['projects', this.currentProjectId, 'tasks', taskId]);
   }
 
+  private showAlert(message: string, type: string) {
+    clearTimeout(this.alert.timer);
+    this.alert.message = message;
+    this.alert.type = type;
+    this.alert.timer = setTimeout(() => {
+      this.alert.message = '';
+    }, this.alert.showTime);
+  }
+
   openNewUserModal() {
     const modalRef = this.modalService.open(NewUserComponent);
     modalRef.result.then((user: User) => {
       this.userService.createUser(user).subscribe(
         () => {
+          this.showAlert(`User with email ${user.authData.email} created`, 'success');
         },
-        (e) => {
+        (e: HttpErrorResponse) => {
+          if (e.error && e.error.message) {
+            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
+          }
           console.log(e);
         }
       );
     }).catch((e) => {
-      console.log('rejected ' + e);
+      console.log('rejected ', e);
     });
   }
 

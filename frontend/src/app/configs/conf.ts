@@ -17,7 +17,7 @@ export const validationConfigs = {
   },
   projectSummary: {
     minlength: 5,
-    maxlength: 30
+    maxlength: 200
   },
   taskDescription: {
     minlength: 10,

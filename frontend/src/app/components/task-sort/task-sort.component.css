@@ -1,0 +1,7 @@
+.form-group {
+  display: inline-block;
+}
+
+.form-group + .form-group {
+  margin-left: 1em;
+}

@@ -51,3 +51,11 @@ ngb-typeahead-window.dropdown-menu {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.break-word {
+  word-break: break-all;
+}
+
+.mh-600px {
+  max-height: 650px;
+}

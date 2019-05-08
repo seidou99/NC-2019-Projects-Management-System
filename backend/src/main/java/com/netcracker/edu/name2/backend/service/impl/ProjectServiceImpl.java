@@ -4,40 +4,48 @@ import com.netcracker.edu.name2.backend.entity.Project;
 import com.netcracker.edu.name2.backend.repository.ProjectRepository;
 import com.netcracker.edu.name2.backend.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
-    private ProjectRepository repo;
+    private ProjectRepository projectRepository;
 
     @Autowired
     public ProjectServiceImpl(ProjectRepository repo) {
-        this.repo = repo;
+        this.projectRepository = repo;
     }
 
     @Override
     public Iterable<Project> findAll() {
-        return repo.findAll();
+        return projectRepository.findAll();
     }
 
     @Override
     public Optional<Project> findById(Long id) {
-        return repo.findById(id);
+        return projectRepository.findById(id);
     }
 
     @Override
     public Project save(Project project) {
         project.setId(null);
-        return repo.save(project);
+        return projectRepository.save(project);
+    }
+
+    @Override
+    public Iterable<Project> findAllUserReported(Long reporterId) {
+        return projectRepository.findAllUserReported(reporterId);
+    }
+
+    @Override
+    public Iterable<Project> findAllUserAssigned(Long assigneeId) {
+        return projectRepository.findAllUserAssigned(assigneeId);
     }
 
     @Override
     public void delete(Long id) {
-        repo.deleteById(id);
+        projectRepository.deleteById(id);
     }
 }

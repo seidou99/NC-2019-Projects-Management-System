@@ -1,4 +1,4 @@
-package com.netcracker.edu.name.models;
+package com.netcracker.edu.name.model;
 
 import java.util.Objects;
 

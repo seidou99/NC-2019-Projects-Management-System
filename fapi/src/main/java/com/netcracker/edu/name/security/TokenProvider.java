@@ -1,9 +1,12 @@
 package com.netcracker.edu.name.security;
 
+import com.netcracker.edu.name.model.User;
+import com.netcracker.edu.name.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +23,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class TokenProvider implements Serializable {
+
+    private UserService userService;
+
+    @Autowired
+    public TokenProvider(UserService userService) {
+        this.userService = userService;
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimsFromToken(token, Claims::getSubject);
@@ -50,8 +60,10 @@ public class TokenProvider implements Serializable {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        User user = userService.findByEmail(authentication.getName());
         return Jwts.builder()
                 .setSubject(authentication.getName())
+                .setId("" + user.getId())
                 .claim(SecurityJWTConstants.AUTHORITIES_KEY, authorities)
                 .signWith(SignatureAlgorithm.HS256, SecurityJWTConstants.SIGNING_KEY)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
