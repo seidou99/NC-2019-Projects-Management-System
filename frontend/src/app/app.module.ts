@@ -27,6 +27,7 @@ import { TaskSortComponent } from './components/task-sort/task-sort.component';
 import {NgxSpinnerModule} from "ngx-spinner";
 import {Ng4LoadingSpinnerModule} from "ng4-loading-spinner";
 import { TaskDashboardAttachmentsComponent } from './components/task-dashboard-attachments/task-dashboard-attachments.component';
+import {InputFileModule} from "ngx-input-file";
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { TaskDashboardAttachmentsComponent } from './components/task-dashboard-a
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    Ng4LoadingSpinnerModule.forRoot()
+    Ng4LoadingSpinnerModule.forRoot(),
+    InputFileModule.forRoot({fileLimit: 10})
   ],
   providers: [
     DatePipe,

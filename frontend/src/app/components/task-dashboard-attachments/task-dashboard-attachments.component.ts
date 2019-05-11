@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Attachment} from '../../models/attachment';
 
 @Component({
   selector: 'app-task-dashboard-attachments',
@@ -7,9 +9,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TaskDashboardAttachmentsComponent implements OnInit {
 
-  constructor() { }
+  @Input() attachments: Attachment[] = [];
+  @Output() uploadAttachments = new EventEmitter<File[]>();
+  @Output() downloadAttachment = new EventEmitter<number>();
+  attachmentForm: FormGroup;
 
-  ngOnInit() {
+  constructor(private fb: FormBuilder) {
   }
 
+  ngOnInit() {
+    this.attachmentForm = this.fb.group({
+      files: [null, Validators.required]
+    });
+  }
+
+  submitForm() {
+    const formValue = this.attachmentForm.get('files').value as any[];
+    const files: File[] = formValue.map((v) => v.file as File);
+    this.uploadAttachments.emit(files);
+  }
+
+  downloadAttachmentClick(attachmentId: number) {
+    this.downloadAttachment.emit(attachmentId);
+  }
 }

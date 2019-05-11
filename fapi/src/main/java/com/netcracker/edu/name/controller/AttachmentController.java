@@ -30,15 +30,6 @@ public class AttachmentController {
         this.restTemplate = restTemplate;
     }
 
-    public static File convert(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        convFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
-
     @PostMapping(produces = "application/json")
     public ResponseEntity uploadFiles(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId,
                                      @RequestParam("files") MultipartFile[] files) {
@@ -51,7 +42,7 @@ public class AttachmentController {
                 MultiValueMap<String, String> fileMap = new LinkedMultiValueMap<>();
                 ContentDisposition contentDisposition = ContentDisposition.builder("form-data")
                         .name("files")
-                        .filename(file.getName())
+                        .filename(file.getOriginalFilename())
                         .build();
                 fileMap.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
                 HttpEntity<byte[]> fileEntity = new HttpEntity<>(file.getBytes(), fileMap);

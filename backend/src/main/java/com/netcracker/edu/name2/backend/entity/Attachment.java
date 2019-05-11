@@ -15,12 +15,14 @@ public class Attachment {
     private Long id;
 
     @NotNull
-    @ManyToOne(targetEntity = Task.class)
+    @ManyToOne
+    @JoinColumn(name = "task_id")
     private Task task;
 
     @NotNull
     private String fileName;
 
+    @JsonIgnore
     public Task getTask() {
         return task;
     }

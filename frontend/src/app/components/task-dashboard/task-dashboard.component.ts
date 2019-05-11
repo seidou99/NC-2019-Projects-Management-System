@@ -7,6 +7,7 @@ import {TaskStatus} from '../../models/task-status';
 import {CommentService} from '../../services/comment.service';
 import {Comment} from '../../models/comment';
 import {AuthService} from '../../services/auth.service';
+import {AttachmentService} from "../../services/attachment.service";
 
 @Component({
   selector: 'app-task-dashboard',
@@ -22,7 +23,7 @@ export class TaskDashboardComponent implements OnInit {
   isFormDisabled$ = new BehaviorSubject<boolean>(true);
 
   constructor(private route: ActivatedRoute, private taskService: TaskService, private commentService: CommentService,
-              private authService: AuthService) {
+              private attachmentService: AttachmentService) {
   }
 
   ngOnInit() {
@@ -35,6 +36,17 @@ export class TaskDashboardComponent implements OnInit {
     }, (e: Error) => console.log(e));
     this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => this.comments = comments,
       (e: Error) => console.log(e));
+  }
+
+  uploadAttachments(attachments: File[]) {
+    this.attachmentService.uploadAttachments(this.task.project.id, this.task.id, attachments).subscribe((data) => {
+      console.log('server response', data);
+      this.ngOnInit();
+    }, (e: Error) => console.log(e));
+  }
+
+  downloadAttachment(attachmentId: number) {
+    this.attachmentService.downloadAttachment(this.task.project.id, this.task.id, attachmentId);
   }
 
   submitComment(comment: Comment) {

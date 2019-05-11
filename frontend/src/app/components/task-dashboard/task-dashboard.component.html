@@ -4,5 +4,11 @@
 <div class="wrapper p-3">
   <app-task-dashboard-edit [isFormDisabled$]="isFormDisabled$" [task$]="task$"
                            (submitTask)="submitTask($event)"></app-task-dashboard-edit>
-  <app-task-dashboard-comments [comments]="comments" (submitComment)="submitComment($event)"></app-task-dashboard-comments>
+  <div class="mt-5">
+    <app-task-dashboard-attachments [attachments]="task? task.attachments : []"
+                                    (uploadAttachments)="uploadAttachments($event)"
+                                    (downloadAttachment)="downloadAttachment($event)"></app-task-dashboard-attachments>
+  </div>
+  <app-task-dashboard-comments [comments]="comments"
+                               (submitComment)="submitComment($event)"></app-task-dashboard-comments>
 </div>

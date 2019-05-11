@@ -16,6 +16,9 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "task")
+    private List<Attachment> attachments;
+
     @NotNull
     @ManyToOne(targetEntity = Project.class)
     private Project project;
@@ -173,6 +176,14 @@ public class Task {
         this.closed = closed;
     }
 
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -180,6 +191,7 @@ public class Task {
         Task task = (Task) o;
         return estimation == task.estimation &&
                 Objects.equals(id, task.id) &&
+                Objects.equals(attachments, task.attachments) &&
                 Objects.equals(project, task.project) &&
                 Objects.equals(code, task.code) &&
                 Objects.equals(description, task.description) &&
@@ -196,13 +208,14 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, project, code, description, priority, status, created, dueDate, resolved, closed, updated, estimation, assignee, reporter);
+        return Objects.hash(id, attachments, project, code, description, priority, status, created, dueDate, resolved, closed, updated, estimation, assignee, reporter);
     }
 
     @Override
     public String toString() {
         return "Task{" +
                 "id=" + id +
+                ", attachments=" + attachments +
                 ", project=" + project +
                 ", code=" + code +
                 ", description='" + description + '\'' +

@@ -2,12 +2,14 @@ import {TaskPriority} from './task-priority';
 import {TaskStatus} from './task-status';
 import {User} from './user';
 import {Project} from './project';
+import {Attachment} from "./attachment";
 
 export class Task {
   id: number;
   project: Project;
   code: number;
   description: string;
+  attachments: Attachment[];
   priority: {
     name: TaskPriority,
     id: number
