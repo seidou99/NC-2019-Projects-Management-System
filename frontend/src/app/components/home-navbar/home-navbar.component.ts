@@ -18,6 +18,7 @@ export class HomeNavbarComponent implements OnInit {
   @Output() createUserClick = new EventEmitter();
   @Output() createTaskClick = new EventEmitter();
   @Output() logoutClick = new EventEmitter();
+  @Output() searchClick = new EventEmitter<string>();
 
   ngOnInit() {
   }

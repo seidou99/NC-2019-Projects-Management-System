@@ -7,7 +7,7 @@ import {TaskStatus} from '../../models/task-status';
 import {CommentService} from '../../services/comment.service';
 import {Comment} from '../../models/comment';
 import {AuthService} from '../../services/auth.service';
-import {AttachmentService} from "../../services/attachment.service";
+import {AttachmentService} from '../../services/attachment.service';
 
 @Component({
   selector: 'app-task-dashboard',
@@ -46,7 +46,9 @@ export class TaskDashboardComponent implements OnInit {
   }
 
   downloadAttachment(attachmentId: number) {
-    this.attachmentService.downloadAttachment(this.task.project.id, this.task.id, attachmentId);
+    this.attachmentService.downloadAttachment(this.task.project.id, this.task.id, attachmentId).subscribe(() => {
+      },
+      (e: Error) => console.log(e));
   }
 
   submitComment(comment: Comment) {

@@ -13,9 +13,9 @@
       </div>
       <form>
         <div class="input-group">
-          <input type="text" class="form-control position-relative d-block" placeholder="Enter filter">
+          <input type="text" class="form-control position-relative d-block" placeholder="Enter filter" #text>
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary btn-right-append position-relative" type="button">Search</button>
+            <button class="btn btn-outline-secondary btn-right-append position-relative" type="button" (click)="searchClick.next(text.value)">Search</button>
           </div>
         </div>
       </form>

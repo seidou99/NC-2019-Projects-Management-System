@@ -3,7 +3,13 @@
   <div class="form-group mt-4">
     <textarea class="form-control" formControlName="text"></textarea>
   </div>
-  <button class="btn btn-outline-success" type="submit">Comment</button>
+  <div class="alert alert-danger mt-2" *ngIf="hasError('text', 'maxlength')">
+    Comment text must be {{validationConfigs.comment.maxlength}} symbols or less
+  </div>
+  <div class="alert alert-danger mt-2" *ngIf="hasError('text', 'required')">
+    Comment text is required
+  </div>
+  <button class="btn btn-outline-success" type="submit" [disabled]="commentForm.invalid">Comment</button>
 </form>
 <div *ngFor="let comment of comments" class="mt-3 comment-border p-2">
   <p>{{comment.author.name}} {{comment.author.surname}}</p>

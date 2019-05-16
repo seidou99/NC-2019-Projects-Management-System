@@ -13,7 +13,7 @@ export const validationConfigs = {
   },
   projectCode: {
     minlength: 3,
-    maxlength: 6
+    maxlength: 5
   },
   projectSummary: {
     minlength: 5,
@@ -25,6 +25,9 @@ export const validationConfigs = {
   },
   estimation: {
     min: 1
+  },
+  comment: {
+    maxlength: 200
   }
 };
 

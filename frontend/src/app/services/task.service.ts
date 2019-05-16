@@ -27,6 +27,11 @@ export class TaskService {
     return this.http.post(`${projectsURI}/${task.project.id}/tasks`, task);
   }
 
+  findTaskByName(taskName: string): Observable<Task> {
+    const params = new HttpParams().set('name', taskName);
+    return this.http.get<Task>(`${projectsURI}/all/tasks`, {params});
+  }
+
   processTaskDates(task: Task): Task {
     console.log(task);
     task.created = new Date(task.created);

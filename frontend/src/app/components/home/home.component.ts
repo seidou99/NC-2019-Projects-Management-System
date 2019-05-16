@@ -35,14 +35,14 @@ export class HomeComponent implements OnInit {
   projects: Project[] = [];
   currentProjectId: number;
   pageNumber = 1;
-  pageSize = 5;
+  pageSize = 10;
   recordsAmount = 0;
   UserRole = UserRole;
   alert = {
     type: '',
     message: '',
     timer: 0,
-    showTime: 5000
+    showTime: 10000
   };
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
@@ -65,7 +65,22 @@ export class HomeComponent implements OnInit {
   taskTypesChange(taskType: TaskType) {
     this.taskType = taskType;
     this.pageNumber = 1;
-    this.loadProjects(this.loadTasks.bind(this));
+    this.loadProjects(() => {
+      if (this.projects.length) {
+        this.currentProjectId = this.projects[0].id;
+      }
+      this.loadTasks();
+    });
+  }
+
+  searchTask(taskName: string) {
+    this.taskService.findTaskByName(taskName).subscribe((t: Task) => {
+      this.router.navigate(['projects', t.project.id, 'tasks', t.id]);
+    }, (e: HttpErrorResponse) => {
+      if (e.status === 404) {
+        this.showAlert(`Task with name '${taskName}' not found`, 'danger');
+      }
+    });
   }
 
   taskSortChange(taskSort: TaskSortAndOrder) {
@@ -73,7 +88,7 @@ export class HomeComponent implements OnInit {
     this.loadTasks();
   }
 
-  loadProjects(afterLoadCallback: any) {
+  loadProjects(afterLoadCallback?: any) {
     this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (afterLoadCallback) {
@@ -96,9 +111,13 @@ export class HomeComponent implements OnInit {
       this.projectService.createProject(project).subscribe(
         () => {
           this.loadProjects(null);
+          this.showAlert('Project created', 'success');
         },
-        (e) => {
+        (e: HttpErrorResponse) => {
           console.log(e);
+          if (e.error && e.error.message) {
+            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
+          }
         }
       );
     }).catch((e) => {
@@ -143,8 +162,13 @@ export class HomeComponent implements OnInit {
     modalRef.result.then((task: Task) => {
       this.taskService.createTask(task).subscribe(() => {
           this.loadTasks();
+          this.showAlert(`Task created`, 'success');
         },
-        e => console.log(e));
+        (e: HttpErrorResponse) => {
+          if (e.error && e.error.message) {
+            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
+          }
+        });
     }).catch((e) => {
       console.log('rejected ' + e);
     });

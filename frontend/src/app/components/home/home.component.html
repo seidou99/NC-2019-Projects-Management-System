@@ -1,20 +1,8 @@
-<!--<div class="d-flex flex-column h-100">-->
-<!--  <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"-->
-<!--                   (createUserClick)="openNewUserModal()" (logoutClick)="logout()"-->
-<!--                   [isNewProjectAvailable]="isNewProjectAvailable()"-->
-<!--                   [isNewUserAvailable]="isNewUserAvailable()"-->
-<!--                   [isNewTaskAvailable]="isNewTaskAvailable()">-->
-<!--  </app-home-navbar>-->
-<!--  <div style="flex-grow: 2;">-->
-
-<!--  </div>-->
-
-<!--</div>-->
 <app-home-navbar (createProjectClick)="openNewProjectModal()" (createTaskClick)="openNewTaskModal()"
                  (createUserClick)="openNewUserModal()" (logoutClick)="logout()"
                  [isNewProjectAvailable]="isNewProjectAvailable()"
                  [isNewUserAvailable]="isNewUserAvailable()"
-                 [isNewTaskAvailable]="isNewTaskAvailable()">
+                 [isNewTaskAvailable]="isNewTaskAvailable()" (searchClick)="searchTask($event)">
 </app-home-navbar>
 
 <ngb-alert [type]="alert.type" *ngIf="alert.message" (close)="alert.message = ''">{{alert.message}}</ngb-alert>
