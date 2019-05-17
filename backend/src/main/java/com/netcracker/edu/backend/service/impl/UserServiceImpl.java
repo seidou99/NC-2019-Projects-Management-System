@@ -68,6 +68,9 @@ public class UserServiceImpl implements UserService {
         user.setId(null);
         String roleName = user.getRole().getName();
         Optional<UserRole> role = userRoleRepository.findByName(roleName);
+        if (!role.isPresent()) {
+            throw new RuntimeException("Role '" + roleName + "' not found");
+        }
         user.setRole(role.get());
         String passwordHash = encoder().encode(user.getAuthData().getPassword());
         user.getAuthData().setPassword(passwordHash);

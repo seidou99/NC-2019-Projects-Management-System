@@ -35,16 +35,22 @@ public class TaskController {
     }
 
     @GetMapping(params = {"page", "size", "sortBy", "orderBy", "reporterId"})
-    public Page<Task> getTasksPageByProjectIdAndReporterEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+    public Page<Task> getTasksPageByProjectIdAndReporterEmail(@PathVariable("projectId") Long projectId,
+                                                              @RequestParam("page") int page,
                                                               @RequestParam("size") int size,
-                                                              @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("reporterId") Long reporterId) {
+                                                              @RequestParam("sortBy") String sortBy,
+                                                              @RequestParam("orderBy") String orderBy,
+                                                              @RequestParam("reporterId") Long reporterId) {
         return this.taskService.getTasksPageByProjectIdAndReporterId(projectId, reporterId, page, size, sortBy, orderBy);
     }
 
     @GetMapping(params = {"page", "size", "sortBy", "orderBy", "assigneeId"})
-    public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
+    public Page<Task> getTasksPageByProjectIdAndAssigneeEmail(@PathVariable("projectId") Long projectId,
+                                                              @RequestParam("page") int page,
                                                               @RequestParam("size") int size,
-                                                              @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("assigneeId") Long assigneeId) {
+                                                              @RequestParam("sortBy") String sortBy,
+                                                              @RequestParam("orderBy") String orderBy,
+                                                              @RequestParam("assigneeId") Long assigneeId) {
         return this.taskService.getTasksPageByProjectIdAndAssigneeId(projectId, assigneeId, page, size, sortBy, orderBy);
     }
 
@@ -75,7 +81,6 @@ public class TaskController {
 
     @PutMapping(value = "/{taskId}")
     public Task updateTask(@RequestBody Task task) {
-        System.out.println(task);
         return taskService.update(task);
     }
 }

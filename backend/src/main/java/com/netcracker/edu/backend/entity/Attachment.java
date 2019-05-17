@@ -3,6 +3,7 @@ package com.netcracker.edu.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,12 +15,12 @@ public class Attachment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "Task is required")
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @NotNull
+    @NotBlank(message = "File name is required")
     private String fileName;
 
     @JsonIgnore
@@ -105,7 +106,6 @@ public class Attachment {
     public String toString() {
         return "Attachment{" +
                 "id=" + id +
-                ", task=" + task +
                 ", fileName='" + fileName + '\'' +
                 ", fileType='" + fileType + '\'' +
                 ", data=" + Arrays.toString(data) +

@@ -19,8 +19,7 @@ public class UserAuthData {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(min = 6, max = 20)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String password;
 
     public Long getId() {

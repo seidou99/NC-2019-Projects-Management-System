@@ -6,6 +6,7 @@ export class Comment {
   author: User;
   text: string;
   task: Task;
+  date: Date;
 
   constructor(text: string) {
     this.text = text;

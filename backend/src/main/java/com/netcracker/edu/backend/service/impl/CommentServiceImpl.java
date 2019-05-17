@@ -10,6 +10,7 @@ import com.netcracker.edu.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,7 @@ public class CommentServiceImpl implements CommentService {
             throw new RuntimeException("Author not found");
         }
         comment.setAuthor(author.get());
+        comment.setDate(new Date());
         return this.commentRepository.save(comment);
     }
 }

@@ -12,8 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -39,9 +43,11 @@ public class AttachmentController {
     }
 
     @PostMapping
-    public ResponseEntity uploadFiles(@PathVariable("taskId") Long taskId, @RequestParam("files") MultipartFile[] files, HttpServletRequest req) {
+    public ResponseEntity uploadFiles(@PathVariable("taskId") Long taskId, @RequestParam("files") MultipartFile[] files) {
         try {
-            List<UploadFileResponse> uploads = Arrays.stream(files).map((file -> saveFile(file, taskId))).collect(Collectors.toList());
+            List<UploadFileResponse> uploads = Arrays.stream(files)
+                    .map((file -> saveFile(file, taskId)))
+                    .collect(Collectors.toList());
             return new ResponseEntity<>(uploads, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -51,14 +57,15 @@ public class AttachmentController {
     @GetMapping(value = "/{attachmentId}")
     public ResponseEntity downloadFile(@PathVariable("attachmentId") Long attachmentId) {
         Optional<Attachment> attachment = attachmentService.findById(attachmentId);
-        if (attachment.isPresent()) {
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(attachment.get().getFileType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + attachment.get().getFileName() + "\"")
-                    .body(new ByteArrayResource(attachment.get().getData()));
-        } else {
+        if (!attachment.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         }
+        String fileName = UriUtils.encode(attachment.get().getFileName(), "UTF-8");
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(attachment.get().getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(new ByteArrayResource(attachment.get().getData()));
     }
 
 

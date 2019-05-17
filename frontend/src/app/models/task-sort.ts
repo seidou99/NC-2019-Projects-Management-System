@@ -1,5 +1,5 @@
 export enum TaskSort {
-  TASK = 'task',
+  CODE = 'code',
   PRIORITY = 'priority',
   STATUS = 'status',
   CREATED = 'created',

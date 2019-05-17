@@ -1,6 +1,7 @@
 package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
@@ -17,30 +18,31 @@ public class Task {
     @OneToMany(mappedBy = "task")
     private List<Attachment> attachments;
 
-    @NotNull
+    @NotNull(message = "Project is required")
     @ManyToOne(targetEntity = Project.class)
     private Project project;
 
     @Column(nullable = false)
     private Long code;
 
-    @Size(min = 20, max = 600)
+    @Size(min = 20, max = 600, message = "Task description size must be between 20 and 600 symbols")
+    @NotBlank(message = "Task description is required")
     @Column(length = 600, nullable = false)
     private String description;
 
-    @NotNull
+    @NotNull(message = "Task priority is required")
     @ManyToOne(targetEntity = TaskPriority.class)
     private TaskPriority priority;
 
-    @NotNull
+    @NotNull(message = "Task status is required")
     @ManyToOne(targetEntity = TaskStatus.class)
     private TaskStatus status;
 
-    @NotNull
+    @NotNull(message = "Task created date is required")
     @Temporal(TemporalType.DATE)
     private Date created;
 
-    @NotNull
+    @NotNull(message = "Task due date is required")
     @Temporal(TemporalType.DATE)
     private Date dueDate;
 

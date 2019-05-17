@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
 
   page$ = new BehaviorSubject<Task[]>([]);
   taskType = TaskType.ALL;
-  taskSort: TaskSortAndOrder = {sort: TaskSort.TASK, order: TaskOrder.ASC};
+  taskSort: TaskSortAndOrder = {sort: TaskSort.CODE, order: TaskOrder.ASC};
   initialTaskTypes$ = new BehaviorSubject<TaskType>(this.taskType);
   initialTaskSort$ = new BehaviorSubject<TaskSortAndOrder>(this.taskSort);
   projects: Project[] = [];
@@ -61,6 +61,8 @@ export class HomeComponent implements OnInit {
       if (projects.length) {
         this.currentProjectId = projects[0].id;
         this.loadTasks();
+      } else {
+        this.spinner.hide();
       }
     }, (e: Error) => {
       console.log(e);
@@ -103,10 +105,15 @@ export class HomeComponent implements OnInit {
       if (afterLoadCallback) {
         afterLoadCallback();
       }
-    }, (e: Error) => console.log(e));
+      this.spinner.hide();
+    }, (e: Error) => {
+      console.log(e);
+      this.spinner.hide()
+    });
   }
 
   loadTasks() {
+    this.spinner.show();
     this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber, this.pageSize, this.taskType, this.taskSort)
       .subscribe((data: Page<Task>) => {
         this.page$.next(data.content);

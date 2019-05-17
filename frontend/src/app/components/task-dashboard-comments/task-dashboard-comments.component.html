@@ -12,7 +12,10 @@
   <button class="btn btn-outline-success" type="submit" [disabled]="commentForm.invalid">Comment</button>
 </form>
 <div *ngFor="let comment of comments" class="mt-3 comment-border p-2">
-  <p>{{comment.author.name}} {{comment.author.surname}}</p>
+  <div class="d-flex justify-content-between">
+    <p>Author: {{comment.author.name}} {{comment.author.surname}}</p>
+    <p>Date: {{comment.date | date:'short'}}</p>
+  </div>
   <p>{{comment.text}}</p>
 </div>
 

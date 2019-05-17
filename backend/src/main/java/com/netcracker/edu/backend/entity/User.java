@@ -1,6 +1,7 @@
 package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -11,19 +12,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message = "User name size must be between 3 and 20 symbols")
+    @NotBlank(message = "User name is required")
     @Column(nullable = false, length = 20)
     private String name;
 
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 20, message = "User surname size must be between 3 and 20 symbols")
+    @NotBlank(message = "User surname is required")
     @Column(nullable = false, length = 20)
     private String surname;
 
-    @NotNull
+    @NotNull(message = "User role is required")
     @ManyToOne(targetEntity = UserRole.class)
     private UserRole role;
 
-    @NotNull
+    @NotNull(message = "User auth data is required")
     @OneToOne(targetEntity = UserAuthData.class)
     private UserAuthData authData;
 

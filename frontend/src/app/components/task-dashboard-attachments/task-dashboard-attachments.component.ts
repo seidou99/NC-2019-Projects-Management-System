@@ -26,6 +26,7 @@ export class TaskDashboardAttachmentsComponent implements OnInit {
   submitForm() {
     const formValue = this.attachmentForm.get('files').value as any[];
     const files: File[] = formValue.map((v) => v.file as File);
+    this.attachmentForm.reset();
     this.uploadAttachments.emit(files);
   }
 

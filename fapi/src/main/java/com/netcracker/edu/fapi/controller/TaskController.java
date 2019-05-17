@@ -11,6 +11,8 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.xml.ws.Response;
+
 @RestController
 @RequestMapping("/api/projects/{projectId}/tasks")
 public class TaskController {
@@ -23,25 +25,33 @@ public class TaskController {
 
     @GetMapping(params = {"page", "size", "sortBy", "orderBy"}, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity getTasksPageByProjectId(@PathVariable("projectId") Long projectId, @RequestParam("page") int page,
-                                                  @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy) {
-        return ResponseEntity.ok(getTasksPage(projectId, page, size, sortBy, orderBy, null, null));
+                                                  @RequestParam("size") int size, @RequestParam("sortBy") String sortBy,
+                                                  @RequestParam("orderBy") String orderBy) {
+        return getTasksPage(projectId, page, size, sortBy, orderBy, null, null);
     }
 
     @GetMapping(params = {"page", "size", "sortBy", "orderBy", "assigneeId"}, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity getTasksPageByProjectIdAndAssigneeId(@PathVariable("projectId") Long projectId,
                                                                @RequestParam("page") int page,
-                                                               @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("assigneeId") Long assigneeId) {
-        return ResponseEntity.ok(getTasksPage(projectId, page, size, sortBy, orderBy, "assigneeId", assigneeId));
+                                                               @RequestParam("size") int size,
+                                                               @RequestParam("sortBy") String sortBy,
+                                                               @RequestParam("orderBy") String orderBy,
+                                                               @RequestParam("assigneeId") Long assigneeId) {
+        return getTasksPage(projectId, page, size, sortBy, orderBy, "assigneeId", assigneeId);
     }
 
     @GetMapping(params = {"page", "size", "sortBy", "orderBy", "reporterId"}, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity getTasksPageByProjectIdAndReporterId(@PathVariable("projectId") Long projectId,
                                                                @RequestParam("page") int page,
-                                                               @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("reporterId") Long reporterId) {
-        return ResponseEntity.ok(getTasksPage(projectId, page, size, sortBy, orderBy, "reporterId", reporterId));
+                                                               @RequestParam("size") int size,
+                                                               @RequestParam("sortBy") String sortBy,
+                                                               @RequestParam("orderBy") String orderBy,
+                                                               @RequestParam("reporterId") Long reporterId) {
+        return getTasksPage(projectId, page, size, sortBy, orderBy, "reporterId", reporterId);
     }
 
-    private String getTasksPage(Long projectId, int page, int size, String sortBy, String orderBy, String userIdParamName, Long userId) {
+    private ResponseEntity getTasksPage(Long projectId, int page, int size, String sortBy, String orderBy, String userIdParamName,
+                                        Long userId) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder
                 .fromHttpUrl(backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks")
                 .queryParam("page", page)
@@ -51,7 +61,13 @@ public class TaskController {
         if (userId != null) {
             uriBuilder.queryParam(userIdParamName, userId);
         }
-        return restTemplate.getForObject(uriBuilder.toUriString(), String.class);
+        String res;
+        try {
+            res = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
+        } catch (HttpStatusCodeException e) {
+            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+        }
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping
@@ -84,7 +100,8 @@ public class TaskController {
     }
 
     @PutMapping(value = "/{taskId}")
-    public ResponseEntity updateTask(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId, @RequestBody Object task) {
+    public ResponseEntity updateTask(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId,
+                                     @RequestBody Object task) {
         restTemplate.put(backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, task);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
