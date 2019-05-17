@@ -28,6 +28,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
 import {Ng4LoadingSpinnerModule} from "ng4-loading-spinner";
 import { TaskDashboardAttachmentsComponent } from './components/task-dashboard-attachments/task-dashboard-attachments.component';
 import {InputFileModule} from "ngx-input-file";
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import {InputFileModule} from "ngx-input-file";
     ProjectsComponent,
     ChangeTaskTypeComponent,
     TaskSortComponent,
-    TaskDashboardAttachmentsComponent
+    TaskDashboardAttachmentsComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,

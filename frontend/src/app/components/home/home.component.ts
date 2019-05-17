@@ -19,6 +19,7 @@ import {TaskSort} from '../../models/task-sort';
 import {TaskOrder} from '../../models/task-order';
 import {TaskSortAndOrder} from '../../models/task-sort-and-order';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
 
 @Component({
   selector: 'app-home',
@@ -46,25 +47,31 @@ export class HomeComponent implements OnInit {
   };
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
-              private router: Router, private taskService: TaskService, public authService: AuthService) {
+              private router: Router, private taskService: TaskService, public authService: AuthService,
+              private spinner: Ng4LoadingSpinnerService) {
   }
 
   ngOnInit() {
     if (this.authService.getUserRole() === UserRole.ADMIN) {
       return;
     }
+    this.spinner.show();
     this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (projects.length) {
         this.currentProjectId = projects[0].id;
         this.loadTasks();
       }
-    }, (e: Error) => console.log(e));
+    }, (e: Error) => {
+      console.log(e);
+      this.spinner.hide();
+    });
   }
 
   taskTypesChange(taskType: TaskType) {
     this.taskType = taskType;
     this.pageNumber = 1;
+    this.spinner.show();
     this.loadProjects(() => {
       if (this.projects.length) {
         this.currentProjectId = this.projects[0].id;
@@ -85,10 +92,12 @@ export class HomeComponent implements OnInit {
 
   taskSortChange(taskSort: TaskSortAndOrder) {
     this.taskSort = taskSort;
+    this.spinner.show();
     this.loadTasks();
   }
 
   loadProjects(afterLoadCallback?: any) {
+    this.spinner.show();
     this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (afterLoadCallback) {
@@ -102,12 +111,17 @@ export class HomeComponent implements OnInit {
       .subscribe((data: Page<Task>) => {
         this.page$.next(data.content);
         this.recordsAmount = data.totalElements;
-      }, (e: Error) => console.log(e));
+        this.spinner.hide();
+      }, (e: Error) => {
+        this.spinner.hide();
+        console.log(e);
+      });
   }
 
   openNewProjectModal() {
     const modalRef = this.modalService.open(NewProjectComponent);
     modalRef.result.then((project: Project) => {
+      this.spinner.show();
       this.projectService.createProject(project).subscribe(
         () => {
           this.loadProjects(null);
@@ -115,6 +129,7 @@ export class HomeComponent implements OnInit {
         },
         (e: HttpErrorResponse) => {
           console.log(e);
+          this.spinner.hide();
           if (e.error && e.error.message) {
             this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
           }
@@ -141,11 +156,14 @@ export class HomeComponent implements OnInit {
   openNewUserModal() {
     const modalRef = this.modalService.open(NewUserComponent);
     modalRef.result.then((user: User) => {
+      this.spinner.show();
       this.userService.createUser(user).subscribe(
         () => {
+          this.spinner.hide();
           this.showAlert(`User with email ${user.authData.email} created`, 'success');
         },
         (e: HttpErrorResponse) => {
+          this.spinner.hide();
           if (e.error && e.error.message) {
             this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
           }
@@ -160,6 +178,7 @@ export class HomeComponent implements OnInit {
   openNewTaskModal() {
     const modalRef = this.modalService.open(NewTaskComponent);
     modalRef.result.then((task: Task) => {
+      this.spinner.show();
       this.taskService.createTask(task).subscribe(() => {
           this.loadTasks();
           this.showAlert(`Task created`, 'success');
@@ -176,11 +195,13 @@ export class HomeComponent implements OnInit {
 
   onPageChange(page: number) {
     this.pageNumber = page;
+    this.spinner.show();
     this.loadTasks();
   }
 
   projectChange(projectId: number) {
     this.currentProjectId = projectId;
+    this.spinner.show();
     this.loadTasks();
   }
 

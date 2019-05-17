@@ -98,7 +98,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> getTasksPageByProjectIdAndReporterId(Long projectId, Long reporterId, int pageNumber, int pageSize, String sortBy, String orderBy) {
+    public Page<Task> getTasksPageByProjectIdAndReporterId(Long projectId, Long reporterId, int pageNumber, int pageSize,
+                                                           String sortBy, String orderBy) {
         Optional<Project> project = projectService.findById(projectId);
         Optional<User> reporter = userService.findById(reporterId);
         if (project.isPresent() && reporter.isPresent()) {
@@ -110,7 +111,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Page<Task> getTasksPageByProjectIdAndAssigneeId(Long projectId, Long assigneeId, int pageNumber, int pageSize, String sortBy, String orderBy) {
+    public Page<Task> getTasksPageByProjectIdAndAssigneeId(Long projectId, Long assigneeId, int pageNumber, int pageSize,
+                                                           String sortBy, String orderBy) {
         Optional<Project> project = projectService.findById(projectId);
         Optional<User> assignee = userService.findById(assigneeId);
         if (project.isPresent() && assignee.isPresent()) {

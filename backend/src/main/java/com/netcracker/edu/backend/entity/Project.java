@@ -1,6 +1,7 @@
 package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Project {
@@ -9,9 +10,11 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(min = 3, max = 5)
     @Column(length = 5, nullable = false, unique = true)
     private String code;
 
+    @Size(min = 20, max = 200)
     @Column(length = 200, nullable = false)
     private String summary;
 

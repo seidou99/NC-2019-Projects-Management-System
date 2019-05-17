@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {UserRole} from '../../models/user-role';
-import {validationConfigs} from '../../configs/conf';
+import {validationConfigs} from '../../configuration/config';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {User} from '../../models/user';
 

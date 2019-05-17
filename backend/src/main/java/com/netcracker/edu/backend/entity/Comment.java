@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +18,8 @@ public class Comment {
     @OneToOne(targetEntity = User.class)
     private User author;
 
-    @Column(nullable = false, length = 200)
+    @Size(min = 3, max = 400)
+    @Column(nullable = false, length = 400)
     private String text;
 
     @ManyToOne(targetEntity = Task.class, fetch = FetchType.LAZY)

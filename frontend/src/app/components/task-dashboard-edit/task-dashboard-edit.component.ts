@@ -11,7 +11,7 @@ import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {search, userMapper, valueContainsValidator} from '../../util/typeahead';
 import {UserService} from '../../services/user.service';
 import {UserRole} from '../../models/user-role';
-import {validationConfigs} from '../../configs/conf';
+import {validationConfigs} from '../../configuration/config';
 import {DatePipe} from '@angular/common';
 
 @Component({

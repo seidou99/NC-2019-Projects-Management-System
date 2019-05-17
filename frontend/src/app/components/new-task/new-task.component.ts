@@ -1,7 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {validationConfigs} from '../../configs/conf';
+import {validationConfigs} from '../../configuration/config';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {Project} from '../../models/project';
 import {ProjectService} from '../../services/project.service';

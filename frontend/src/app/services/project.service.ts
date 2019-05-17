@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Project} from '../models/project';
-import {projectsURI} from '../configs/conf';
+import {projectsURI} from '../configuration/config';
 import {Observable} from 'rxjs';
 import {Page} from '../models/page';
 import {Task} from '../models/task';

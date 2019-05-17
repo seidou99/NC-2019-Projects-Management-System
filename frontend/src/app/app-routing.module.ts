@@ -5,6 +5,7 @@ import {HomeComponent} from './components/home/home.component';
 import {TaskDashboardComponent} from './components/task-dashboard/task-dashboard.component';
 import {RoleGuard} from './services/role.guard';
 import {UserRole} from './models/user-role';
+import {PageNotFoundComponent} from "./components/page-not-found/page-not-found.component";
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
     data: {
       expectedRoles: [UserRole.PROJECT_MANAGER, UserRole.DEVELOPER, UserRole.QA]
     }
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent
   }
 ];
 

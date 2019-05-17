@@ -1,14 +1,14 @@
 export const validationConfigs = {
   password: {
-    minlength: 3,
+    minlength: 6,
     maxlength: 20
   },
   name: {
-    minlength: 2,
+    minlength: 3,
     maxlength: 20
   },
   surname: {
-    minlength: 2,
+    minlength: 3,
     maxlength: 20
   },
   projectCode: {
@@ -16,18 +16,19 @@ export const validationConfigs = {
     maxlength: 5
   },
   projectSummary: {
-    minlength: 5,
+    minlength: 20,
     maxlength: 200
   },
   taskDescription: {
-    minlength: 10,
-    maxlength: 200
+    minlength: 20,
+    maxlength: 600
   },
   estimation: {
     min: 1
   },
   comment: {
-    maxlength: 200
+    minlength: 3,
+    maxlength: 400
   }
 };
 

@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Comment} from '../../models/comment';
-import {validationConfigs} from '../../configs/conf';
+import {validationConfigs} from '../../configuration/config';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 
 @Component({
@@ -27,7 +27,6 @@ export class TaskDashboardCommentsComponent {
   onCommentSubmit() {
     const control = this.commentForm.get('text');
     const text = control.value;
-    // control.patchValue('');
     control.reset('');
     this.submitComment.emit(new Comment(text));
   }

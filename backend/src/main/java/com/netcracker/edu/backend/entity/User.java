@@ -2,6 +2,7 @@ package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
@@ -10,9 +11,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(min = 3, max = 20)
     @Column(nullable = false, length = 20)
     private String name;
 
+    @Size(min = 3, max = 20)
     @Column(nullable = false, length = 20)
     private String surname;
 

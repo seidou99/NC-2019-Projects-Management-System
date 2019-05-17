@@ -37,7 +37,7 @@ public class TaskController {
     @GetMapping(params = {"page", "size", "sortBy", "orderBy", "reporterId"}, produces = {"application/json;charset=UTF-8"})
     public ResponseEntity getTasksPageByProjectIdAndReporterId(@PathVariable("projectId") Long projectId,
                                                                @RequestParam("page") int page,
-                                                               @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy,                                                                         @RequestParam("reporterId") Long reporterId) {
+                                                               @RequestParam("size") int size, @RequestParam("sortBy") String sortBy, @RequestParam("orderBy") String orderBy, @RequestParam("reporterId") Long reporterId) {
         return ResponseEntity.ok(getTasksPage(projectId, page, size, sortBy, orderBy, "reporterId", reporterId));
     }
 
@@ -62,8 +62,12 @@ public class TaskController {
 
     @GetMapping(value = "/{taskId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity findTaskById(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId) {
-        return ResponseEntity.ok(restTemplate
-                .getForObject(backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, String.class));
+        try {
+            return ResponseEntity.ok(restTemplate.getForObject(
+                    backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, String.class));
+        } catch (HttpStatusCodeException e) {
+            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
+        }
     }
 
     @GetMapping(params = {"name"}, produces = "application/json;charset=UTF-8")

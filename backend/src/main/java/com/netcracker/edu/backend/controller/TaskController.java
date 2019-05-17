@@ -54,8 +54,13 @@ public class TaskController {
     }
 
     @GetMapping(value = "/{taskId}")
-    public Task findTaskById(@PathVariable(name = "taskId") Long taskId) {
-        return taskService.findById(taskId).get();
+    public ResponseEntity<Task> findTaskById(@PathVariable(name = "taskId") Long taskId) {
+        Optional<Task> task = taskService.findById(taskId);
+        if (task.isPresent()) {
+            return new ResponseEntity<>(task.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @GetMapping(params = {"name"})

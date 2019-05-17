@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Task} from '../models/task';
-import {projectsURI} from '../configs/conf';
+import {projectsURI} from '../configuration/config';
 import {Observable} from 'rxjs';
 import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';

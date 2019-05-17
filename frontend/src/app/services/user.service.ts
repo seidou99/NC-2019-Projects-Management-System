@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {usersURI} from '../configs/conf';
+import {usersURI} from '../configuration/config';
 import {User} from '../models/user';
 import {Observable} from 'rxjs';
 import {UserRole} from '../models/user-role';

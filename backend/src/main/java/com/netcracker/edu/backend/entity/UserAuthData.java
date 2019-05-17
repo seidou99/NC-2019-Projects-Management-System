@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -13,9 +15,11 @@ public class UserAuthData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Size(min = 6, max = 20)
     @Column(nullable = false, length = 20)
     private String password;
 

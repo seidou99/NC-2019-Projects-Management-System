@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {UserAuthData} from '../models/user';
 import {UserRole} from '../models/user-role';
 import {HttpClient} from '@angular/common/http';
-import {loginURI} from '../configs/conf';
+import {loginURI} from '../configuration/config';
 import {map} from 'rxjs/operators';
 import {TokenResponse} from '../models/tokenResponse';
 import {Observable} from 'rxjs';

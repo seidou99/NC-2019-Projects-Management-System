@@ -29,11 +29,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String authToken = null;
         if (header != null && header.startsWith(SecurityJWTConstants.TOKEN_PREFIX)) {
             authToken = header.replace(SecurityJWTConstants.TOKEN_PREFIX, "");
-            try {
-                userName = tokenProvider.getUsernameFromToken(authToken);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+            userName = tokenProvider.getUsernameFromToken(authToken);
         }
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);

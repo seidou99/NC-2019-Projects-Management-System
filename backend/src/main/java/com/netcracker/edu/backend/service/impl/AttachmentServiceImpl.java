@@ -29,9 +29,6 @@ public class AttachmentServiceImpl implements AttachmentService {
     public Attachment save(MultipartFile file, Long taskId) {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try {
-            if (fileName.contains("..")) {
-                throw new RuntimeException("Sorry! Filename contains invalid sequence " + fileName);
-            }
             Optional<Task> task = taskService.findById(taskId);
             if (!task.isPresent()) {
                 throw new RuntimeException("Could not find task to attach file");

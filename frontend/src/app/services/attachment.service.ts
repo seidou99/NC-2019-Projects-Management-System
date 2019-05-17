@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpClientJsonpModule, HttpResponse} from '@angular/common/http';
 import {saveAs} from 'file-saver';
-import {projectsURI} from '../configs/conf';
+import {projectsURI} from '../configuration/config';
 import {map} from 'rxjs/operators';
 import {Observable} from 'rxjs/internal/Observable';
 
@@ -25,6 +25,7 @@ export class AttachmentService {
       responseType: 'blob'
     }).pipe(
       map((data: HttpResponse<Blob>) => {
+        console.log(data);
         let fileName = data.headers.get('content-disposition').split(';')[1].split('=')[1];
         fileName = fileName.substr(1, fileName.length - 2);
         saveAs(data.body, fileName);

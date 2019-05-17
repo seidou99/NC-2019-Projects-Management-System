@@ -2,6 +2,7 @@ package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,8 @@ public class Task {
     @Column(nullable = false)
     private Long code;
 
-    @Column(length = 200, nullable = false)
+    @Size(min = 20, max = 600)
+    @Column(length = 600, nullable = false)
     private String description;
 
     @NotNull
