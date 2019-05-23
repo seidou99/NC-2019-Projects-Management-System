@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriUtils;
 
@@ -43,23 +44,18 @@ public class AttachmentController {
     }
 
     @PostMapping
-    public ResponseEntity uploadFiles(@PathVariable("taskId") Long taskId, @RequestParam("files") MultipartFile[] files) {
-        try {
-            List<UploadFileResponse> uploads = Arrays.stream(files)
-                    .map((file -> saveFile(file, taskId)))
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(uploads, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<List<UploadFileResponse>> uploadFiles(@PathVariable("taskId") Long taskId, @RequestParam("files") MultipartFile[] files) {
+        List<UploadFileResponse> uploads = Arrays.stream(files)
+                .map((file -> saveFile(file, taskId)))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(uploads, HttpStatus.CREATED);
     }
 
     @GetMapping(value = "/{attachmentId}")
     public ResponseEntity downloadFile(@PathVariable("attachmentId") Long attachmentId) {
         Optional<Attachment> attachment = attachmentService.findById(attachmentId);
         if (!attachment.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attachment not found");
         }
         String fileName = UriUtils.encode(attachment.get().getFileName(), "UTF-8");
         return ResponseEntity.ok()
@@ -67,6 +63,4 @@ public class AttachmentController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .body(new ByteArrayResource(attachment.get().getData()));
     }
-
-
 }

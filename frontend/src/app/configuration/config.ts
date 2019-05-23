@@ -29,6 +29,9 @@ export const validationConfigs = {
   comment: {
     minlength: 3,
     maxlength: 400
+  },
+  attachment: {
+    maxSize: 50 * 1024 * 1024
   }
 };
 

@@ -29,6 +29,7 @@ import {Ng4LoadingSpinnerModule} from "ng4-loading-spinner";
 import { TaskDashboardAttachmentsComponent } from './components/task-dashboard-attachments/task-dashboard-attachments.component';
 import {InputFileModule} from "ngx-input-file";
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { AlreadyLoggedInComponent } from './components/already-logged-in/already-logged-in.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     ChangeTaskTypeComponent,
     TaskSortComponent,
     TaskDashboardAttachmentsComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    AlreadyLoggedInComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +61,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     ReactiveFormsModule,
     HttpClientModule,
     Ng4LoadingSpinnerModule.forRoot(),
-    InputFileModule.forRoot({fileLimit: 10})
+    InputFileModule.forRoot({fileLimit: 5})
   ],
   providers: [
     DatePipe,

@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {TaskStatus} from '../../models/task-status';
 import {TaskPriority} from '../../models/task-priority';
 import {Task} from '../../models/task';
 import {minDateValidator} from '../../util/date';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {User} from '../../models/user';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
@@ -19,7 +19,7 @@ import {DatePipe} from '@angular/common';
   templateUrl: './task-dashboard-edit.component.html',
   styleUrls: ['./task-dashboard-edit.component.css']
 })
-export class TaskDashboardEditComponent implements OnInit {
+export class TaskDashboardEditComponent implements OnInit, OnDestroy {
 
   @Input() task$: Observable<Task>;
   @Input() isFormDisabled$: Observable<boolean>;
@@ -36,6 +36,7 @@ export class TaskDashboardEditComponent implements OnInit {
   validationConfigs = validationConfigs;
   minDueDate: string;
   task: Task;
+  subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder, private userService: UserService, private datePipe: DatePipe) {
     this.minDueDate = datePipe.transform(new Date(), 'yyyy-MM-dd');
@@ -82,14 +83,16 @@ export class TaskDashboardEditComponent implements OnInit {
   }
 
   private loadData() {
-    this.userService.getAllUsersByRole([UserRole.QA, UserRole.DEVELOPER, UserRole.PROJECT_MANAGER]).subscribe((assignees: User[]) => {
-      this.assignees.splice(0, this.assignees.length);
-      assignees.forEach((assignee: User) => this.assignees.push(assignee));
-    }, (e: Error) => console.log(e));
+    const sub = this.userService.getAllUsersByRole([UserRole.QA, UserRole.DEVELOPER, UserRole.PROJECT_MANAGER])
+      .subscribe((assignees: User[]) => {
+        this.assignees.splice(0, this.assignees.length);
+        assignees.forEach((assignee: User) => this.assignees.push(assignee));
+      }, (e: Error) => console.log(e));
+    this.subscriptions.push(sub);
   }
 
   private subscribeToFormToggle() {
-    this.isFormDisabled$.subscribe((isDisabled: boolean) => {
+    const sub = this.isFormDisabled$.subscribe((isDisabled: boolean) => {
       if (isDisabled) {
         this.taskForm.disable();
       } else {
@@ -99,13 +102,13 @@ export class TaskDashboardEditComponent implements OnInit {
           control.enable();
           control.markAsDirty();
         });
-
       }
     }, (e: Error) => console.log(e));
+    this.subscriptions.push(sub);
   }
 
   private subscribeToFormInit() {
-    this.task$.subscribe((task: Task) => {
+    const sub = this.task$.subscribe((task: Task) => {
       this.task = task;
       const data = {
         priority: task.priority.name,
@@ -126,6 +129,7 @@ export class TaskDashboardEditComponent implements OnInit {
         control.updateValueAndValidity();
       });
     }, (e: Error) => console.log(e));
+    this.subscriptions.push(sub);
   }
 
   submitForm() {
@@ -137,5 +141,9 @@ export class TaskDashboardEditComponent implements OnInit {
     this.task.description = formValue.description;
     this.task.dueDate = formValue.dueDate;
     this.submitTask.emit(this.task);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
   }
 }

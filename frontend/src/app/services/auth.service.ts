@@ -17,13 +17,13 @@ export class AuthService {
   private readonly authDataKey: string = 'projects-management-auth-data';
 
   constructor(private http: HttpClient) {
+
   }
 
   login(credentials: UserAuthData, rememberPassword: boolean): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(loginURI, credentials).pipe(
       map((tokenResponse: TokenResponse) => {
         localStorage.setItem(this.tokenKey, tokenResponse.token);
-        console.log('token in local storage ', localStorage.getItem(this.tokenKey));
         if (rememberPassword) {
           localStorage.setItem(this.authDataKey, JSON.stringify(credentials));
         } else {

@@ -34,12 +34,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/users", produces = "application/json")
-    public ResponseEntity register(@RequestBody User user) {
-        try {
-            return new ResponseEntity<User>(this.userService.save(user), HttpStatus.CREATED);
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<String>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+    public ResponseEntity<User> register(@RequestBody User user) {
+        return new ResponseEntity<>(this.userService.save(user), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")

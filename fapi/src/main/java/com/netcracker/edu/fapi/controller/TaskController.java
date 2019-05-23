@@ -2,8 +2,9 @@ package com.netcracker.edu.fapi.controller;
 
 import com.netcracker.edu.fapi.property.BackendApiProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -12,6 +13,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.xml.ws.Response;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects/{projectId}/tasks")
@@ -62,11 +66,7 @@ public class TaskController {
             uriBuilder.queryParam(userIdParamName, userId);
         }
         String res;
-        try {
-            res = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+        res = restTemplate.getForObject(uriBuilder.toUriString(), String.class);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
@@ -78,12 +78,9 @@ public class TaskController {
 
     @GetMapping(value = "/{taskId}", produces = {"application/json;charset=UTF-8"})
     public ResponseEntity findTaskById(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId) {
-        try {
-            return ResponseEntity.ok(restTemplate.getForObject(
-                    backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, String.class));
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+        String task = restTemplate.getForObject(backendApiProperties.getProjectsUri() + "/" + projectId +
+                "/tasks/" + taskId, String.class);
+        return ResponseEntity.ok(task);
     }
 
     @GetMapping(params = {"name"}, produces = "application/json;charset=UTF-8")
@@ -91,18 +88,19 @@ public class TaskController {
         UriComponentsBuilder uri = UriComponentsBuilder
                 .fromHttpUrl(backendApiProperties.getProjectsUri() + "/all/tasks")
                 .queryParam("name", taskName);
-        try {
-            String data = restTemplate.getForObject(uri.toUriString(), String.class);
-            return ResponseEntity.ok(data);
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+        String data = restTemplate.getForObject(uri.toUriString(), String.class);
+        return ResponseEntity.ok(data);
     }
 
-    @PutMapping(value = "/{taskId}")
+    @PutMapping(value = "/{taskId}", produces = "application/json;charset=UTF-8")
     public ResponseEntity updateTask(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId,
                                      @RequestBody Object task) {
-        restTemplate.put(backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, task);
+        HttpHeaders headers = new HttpHeaders();
+        List<MediaType> acceptTypes = new LinkedList<>();
+        acceptTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(acceptTypes);
+        HttpEntity<Object> entity = new HttpEntity<>(task, headers);
+        restTemplate.put(backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId, entity);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 }

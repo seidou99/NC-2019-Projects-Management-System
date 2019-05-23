@@ -18,9 +18,14 @@ export class UserService {
   }
 
   getAllUsersByRole(roles: UserRole[]): Observable<User[]> {
-    // const params = new HttpParams({fromObject: {roles}});
     let params = new HttpParams();
     roles.forEach((role: UserRole) => params = params.append('roles', '' + role));
     return this.http.get<User[]>(usersURI, {params});
   }
+
+  // isEmailTaken(email: string): Observable<boolean> {
+  //   const params = new HttpParams().set('email', email);
+  //
+  // }
+
 }

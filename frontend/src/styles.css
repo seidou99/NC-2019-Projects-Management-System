@@ -61,3 +61,19 @@ ngb-typeahead-window.dropdown-menu {
 .mh-600px {
   max-height: 650px;
 }
+
+.page-wrap {
+  min-height: 100vh;
+}
+
+.alert-wrapper {
+  position: sticky;
+  z-index: 900;
+  width: 100%
+}
+
+.task-dashboard-alert {
+  position: sticky;
+  top: 8rem;
+  z-index: 100;
+}

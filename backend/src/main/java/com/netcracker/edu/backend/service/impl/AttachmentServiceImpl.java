@@ -6,9 +6,11 @@ import com.netcracker.edu.backend.repository.AttachmentRepository;
 import com.netcracker.edu.backend.service.AttachmentService;
 import com.netcracker.edu.backend.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -31,12 +33,14 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
             Optional<Task> task = taskService.findById(taskId);
             if (!task.isPresent()) {
-                throw new RuntimeException("Could not find task to attach file");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                        "Could not find task to attach file");
             }
             Attachment attachment = new Attachment(task.get(), fileName, file.getContentType(), file.getBytes());
             return attachmentRepository.save(attachment);
         } catch (IOException ex) {
-            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Could not store file " + fileName + ". Please try again!", ex);
         }
     }
 

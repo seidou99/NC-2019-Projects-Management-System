@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,13 +70,14 @@ public class UserServiceImpl implements UserService {
         String roleName = user.getRole().getName();
         Optional<UserRole> role = userRoleRepository.findByName(roleName);
         if (!role.isPresent()) {
-            throw new RuntimeException("Role '" + roleName + "' not found");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Role '" + roleName + "' not found");
         }
         user.setRole(role.get());
         String passwordHash = encoder().encode(user.getAuthData().getPassword());
         user.getAuthData().setPassword(passwordHash);
         if (userAuthDataService.findByEmail(user.getAuthData().getEmail()).isPresent()) {
-            throw new RuntimeException("User with email '" + user.getAuthData().getEmail() + "' already exists");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "User with email '" + user.getAuthData().getEmail() + "' already exists");
         }
         userAuthDataService.save(user.getAuthData());
         return userRepository.save(user);

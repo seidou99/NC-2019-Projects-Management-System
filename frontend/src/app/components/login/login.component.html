@@ -1,6 +1,6 @@
-<div class="d-flex vh-100 flex-column justify-content-center">
+<div class="d-flex vh-100 flex-column justify-content-center login-wrapper">
   <div class="p-4 login-container m-auto">
-    <div class="alert alert-success" *ngIf="errorText">{{errorText}}</div>
+    <ngb-alert [type]="alert.type" *ngIf="alert.message" (close)="alert.message = ''">{{alert.message}}</ngb-alert>
     <div class="d-flex justify-content-center">
       <h3>Log in</h3>
     </div>
@@ -35,9 +35,9 @@
         <label class="ml-2">Remember password</label>
       </div>
 
-      <button class="btn btn-outline-primary w-100" [disabled]="!loginForm.valid">Log in</button>
+      <button class="btn btn-primary w-100" [disabled]="!loginForm.valid">Log in</button>
     </form>
   </div>
 </div>
-<ng4-loading-spinner [loadingText]="'Loading...'"></ng4-loading-spinner>
+<ng4-loading-spinner [loadingText]="'Loading...'" [timeout]="20000"></ng4-loading-spinner>
 

@@ -1,26 +1,28 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {validationConfigs} from '../../configuration/config';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {AuthService} from '../../services/auth.service';
 import {UserAuthData} from '../../models/user';
 import {ActivatedRoute, Router, RouterState} from '@angular/router';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Ng4LoadingSpinnerService} from 'ng4-loading-spinner';
+import {Alert} from "../../util/alert";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: FormGroup;
   validationConfigs = validationConfigs;
   hasError: HasErrorFunction;
-  errorText = '';
+  alert: Alert;
+  subscriptions: Subscription[] = [];
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router,
               private activatedRoute: ActivatedRoute, private spinner: Ng4LoadingSpinnerService) {
@@ -32,14 +34,19 @@ export class LoginComponent implements OnInit {
       rememberPassword: true
     });
     this.hasError = createHasError(this.loginForm);
+    this.alert = new Alert();
   }
 
   ngOnInit() {
+    if (this.authService.getToken()) {
+      this.router.navigate(['already-logged-in']);
+      return;
+    }
     const state$: Observable<any> = this.activatedRoute.paramMap.pipe(
       map(() => window.history.state)
     );
-    state$.subscribe((state: any) => {
-      this.errorText = state.reason;
+    const sub = state$.subscribe((state: any) => {
+      this.alert.showAlert(state.reason, 'danger');
     });
     const credentials = this.authService.getUserCredentials();
     if (credentials) {
@@ -55,17 +62,17 @@ export class LoginComponent implements OnInit {
     const rememberPassword: boolean = formValue.rememberPassword;
     const credentials = new UserAuthData(formValue.email, formValue.password);
     this.spinner.show();
-    this.authService.login(credentials, rememberPassword).subscribe(() => {
-      console.log('in callback');
+    const sub = this.authService.login(credentials, rememberPassword).subscribe(() => {
       this.spinner.hide();
       this.router.navigate(['']);
     }, (e: HttpErrorResponse) => {
-      console.log(e);
+      this.alert.showHttpError(e);
       this.spinner.hide();
-      if (e.status === 401) {
-        this.errorText = 'Wrong email or password';
-      }
     });
+    this.subscriptions.push(sub);
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
+  }
 }

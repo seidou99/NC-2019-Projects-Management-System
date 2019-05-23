@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {TaskSort} from '../../models/task-sort';
 import {TaskOrder} from '../../models/task-order';
 import {TaskSortAndOrder} from "../../models/task-sort-and-order";
@@ -10,13 +10,14 @@ import {TaskSortAndOrder} from "../../models/task-sort-and-order";
   templateUrl: './task-sort.component.html',
   styleUrls: ['./task-sort.component.css']
 })
-export class TaskSortComponent implements OnInit {
+export class TaskSortComponent implements OnInit, OnDestroy {
 
   sortForm: FormGroup;
   @Input() initialState$: Observable<TaskSortAndOrder>;
   @Output() stateChange = new EventEmitter<TaskSortAndOrder>();
   availableSorts: TaskSort[] = [];
   availableOrders: TaskOrder[] = [];
+  subscriptions: Subscription[] = [];
 
   constructor(private fb: FormBuilder) {
     this.sortForm = this.fb.group({
@@ -32,11 +33,16 @@ export class TaskSortComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initialState$.subscribe((v: TaskSortAndOrder) => {
+    const sub1 = this.initialState$.subscribe((v: TaskSortAndOrder) => {
       this.sortForm.patchValue({sort: v.sort, order: v.order});
     });
-    this.sortForm.valueChanges.subscribe(() => {
+    const sub2 = this.sortForm.valueChanges.subscribe(() => {
       this.stateChange.emit(this.sortForm.getRawValue());
     });
+    this.subscriptions.push(sub1, sub2);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
   }
 }

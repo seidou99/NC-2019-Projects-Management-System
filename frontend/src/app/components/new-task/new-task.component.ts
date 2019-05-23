@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NgbActiveModal, NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {validationConfigs} from '../../configuration/config';
 import {createHasError, HasErrorFunction} from '../../util/has-error';
 import {Project} from '../../models/project';
 import {ProjectService} from '../../services/project.service';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {UserRole} from '../../models/user-role';
 import {TaskPriority} from '../../models/task-priority';
 import {User} from '../../models/user';
@@ -23,7 +23,7 @@ import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
   templateUrl: './new-task.component.html',
   styleUrls: ['./new-task.component.css']
 })
-export class NewTaskComponent implements OnInit {
+export class NewTaskComponent implements OnInit, OnDestroy {
 
   newTaskForm: FormGroup;
   hasError: HasErrorFunction;
@@ -40,6 +40,7 @@ export class NewTaskComponent implements OnInit {
   assigneeSearch;
   assignees: User[] = [];
   minDueDate: string = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+  subscriptions: Subscription[] = [];
 
   constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private projectService: ProjectService,
               private userService: UserService, private datePipe: DatePipe, private spinner: Ng4LoadingSpinnerService) {
@@ -66,7 +67,7 @@ export class NewTaskComponent implements OnInit {
 
   ngOnInit() {
     this.spinner.show();
-    this.projectService.getAllProjects(TaskType.ALL).subscribe(
+    const sub1 = this.projectService.getAllProjects(TaskType.ALL).subscribe(
       (data: Project[]) => {
         data.forEach((value: Project) => this.projects.push(value));
         this.spinner.hide();
@@ -75,12 +76,14 @@ export class NewTaskComponent implements OnInit {
         this.spinner.hide();
       }
     );
-    this.userService.getAllUsersByRole([UserRole.DEVELOPER, UserRole.QA, UserRole.PROJECT_MANAGER]).subscribe((data: User[]) => {
-      data.forEach((u: User) => this.assignees.push(u));
-    }, (e) => console.log(e));
+    const sub2 = this.userService.getAllUsersByRole([UserRole.DEVELOPER, UserRole.QA, UserRole.PROJECT_MANAGER])
+      .subscribe((data: User[]) => {
+        data.forEach((u: User) => this.assignees.push(u));
+      }, (e) => console.log(e));
     this.projectCodeSearch = search<Project>(this.codeTypeahead, this.codeFocus$, this.codeClick$, this.projects, projectMapper);
     this.assigneeSearch = search<User>(this.assigneeTypeahead, this.assigneeFocus$, this.assigneeClick$,
       this.assignees, userMapper);
+    this.subscriptions.push(sub1, sub2);
   }
 
   submitForm() {
@@ -92,5 +95,9 @@ export class NewTaskComponent implements OnInit {
     }
     const task = new Task(project, formValue.description, formValue.priority, new Date(formValue.dueDate), formValue.estimation, assignee);
     this.activeModal.close(task);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
   }
 }

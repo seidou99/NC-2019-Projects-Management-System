@@ -1,38 +1,41 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TaskService} from '../../services/task.service';
 import {Task} from '../../models/task';
-import {BehaviorSubject, Subject} from 'rxjs';
+import {BehaviorSubject, Subject, Subscription} from 'rxjs';
 import {TaskStatus} from '../../models/task-status';
 import {CommentService} from '../../services/comment.service';
 import {Comment} from '../../models/comment';
-import {AuthService} from '../../services/auth.service';
 import {AttachmentService} from '../../services/attachment.service';
 import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
 import {HttpErrorResponse} from "@angular/common/http";
+import {Alert} from "../../util/alert";
 
 @Component({
   selector: 'app-task-dashboard',
   templateUrl: './task-dashboard.component.html',
   styleUrls: ['./task-dashboard.component.css']
 })
-export class TaskDashboardComponent implements OnInit {
+export class TaskDashboardComponent implements OnInit, OnDestroy {
 
   taskName = '';
   task: Task;
   comments: Comment[] = [];
   task$ = new Subject<Task>();
   isFormDisabled$ = new BehaviorSubject<boolean>(true);
+  alert: Alert;
+  subscriptions: Subscription[] = [];
 
   constructor(private route: ActivatedRoute, private taskService: TaskService, private commentService: CommentService,
               private attachmentService: AttachmentService, private spinner: Ng4LoadingSpinnerService, private router: Router) {
+    this.alert = new Alert();
   }
 
   ngOnInit() {
     const taskId = this.route.snapshot.paramMap.get('taskId');
     const projectId = this.route.snapshot.paramMap.get('taskId');
     this.spinner.show();
-    this.taskService.getTask(projectId, taskId).subscribe((task: Task) => {
+    const sub1 = this.taskService.getTask(projectId, taskId).subscribe((task: Task) => {
       this.task = task;
       this.task$.next(task);
       this.taskName = `${task.project.code}-${task.code}`;
@@ -41,44 +44,50 @@ export class TaskDashboardComponent implements OnInit {
       console.log(e);
       if (e.status === 404) {
         this.router.navigate(['page-not-found']);
+      } else {
+        this.alert.showHttpError(e);
       }
       this.spinner.hide();
     });
-    this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => {
+    const sub2 = this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => {
       if (this.task) {
         this.spinner.hide();
       }
       this.comments = comments;
     }, (e: HttpErrorResponse) => {
-      console.log(e);
+      this.alert.showHttpError(e);
     });
+    this.subscriptions.push(sub1, sub2);
   }
 
   uploadAttachments(attachments: File[]) {
     this.spinner.show();
-    this.attachmentService.uploadAttachments(this.task.project.id, this.task.id, attachments).subscribe((data) => {
-      console.log('server response', data);
+    const sub = this.attachmentService.uploadAttachments(this.task.project.id, this.task.id, attachments).subscribe((data) => {
+      this.alert.showSuccess('Attachment uploaded');
       this.ngOnInit();
-    }, (e: Error) => {
-      console.log(e);
+    }, (e: HttpErrorResponse) => {
+      this.alert.showHttpError(e);
       this.spinner.hide();
     });
+    this.subscriptions.push(sub);
   }
 
   downloadAttachment(attachmentId: number) {
     this.attachmentService.downloadAttachment(this.task.project.id, this.task.id, attachmentId).subscribe(() => {
-    }, (e: Error) => console.log(e));
+    }, (e: HttpErrorResponse) => this.alert.showHttpError(e));
   }
 
   submitComment(comment: Comment) {
     const taskId = this.route.snapshot.paramMap.get('taskId');
     const projectId = this.route.snapshot.paramMap.get('taskId');
-    this.commentService.createComment(projectId, taskId, comment).subscribe(
+    const sub1 = this.commentService.createComment(projectId, taskId, comment).subscribe(
       () => {
-        this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => {
+        const sub2 = this.commentService.getAllTaskComments(projectId, taskId).subscribe((comments: Comment[]) => {
           this.comments = comments;
         });
-      }, (e: Error) => console.log(e));
+        this.subscriptions.push(sub2);
+      }, (e: HttpErrorResponse) => this.alert.showHttpError(e));
+    this.subscriptions.push(sub1);
   }
 
   changeStatus(status: TaskStatus) {
@@ -91,16 +100,22 @@ export class TaskDashboardComponent implements OnInit {
 
   submitTask(task: Task) {
     this.spinner.show();
-    this.taskService.updateTask(task).subscribe((data: Task) => {
+    const sub = this.taskService.updateTask(task).subscribe((data: Task) => {
       this.ngOnInit();
       this.isFormDisabled$.next(true);
-    }, (e: Error) => {
+      this.alert.showSuccess('Task updated');
+    }, (e: HttpErrorResponse) => {
       this.spinner.hide();
-      console.log(e);
+      this.alert.showHttpError(e);
     });
+    this.subscriptions.push(sub);
   }
 
   onEditClick() {
     this.isFormDisabled$.next(!this.isFormDisabled$.value);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
   }
 }

@@ -33,7 +33,6 @@ export class TaskService {
   }
 
   processTaskDates(task: Task): Task {
-    console.log(task);
     task.created = new Date(task.created);
     task.dueDate = new Date(task.dueDate);
     if (task.updated) {

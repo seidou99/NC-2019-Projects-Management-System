@@ -1,7 +1,8 @@
 <app-task-dashboard-navbar (editClick)="onEditClick()" (statusChange)="changeStatus($event)"
                            [header]="taskName"></app-task-dashboard-navbar>
-
 <div class="wrapper p-3">
+  <ngb-alert class="task-dashboard-alert" [type]="alert.type" *ngIf="alert.message"
+             (close)="alert.message = ''">{{alert.message}}</ngb-alert>
   <app-task-dashboard-edit [isFormDisabled$]="isFormDisabled$" [task$]="task$"
                            (submitTask)="submitTask($event)"></app-task-dashboard-edit>
   <div class="mt-5">
@@ -11,5 +12,6 @@
   </div>
   <app-task-dashboard-comments [comments]="comments"
                                (submitComment)="submitComment($event)"></app-task-dashboard-comments>
-  <ng4-loading-spinner [loadingText]="'Loading...'"></ng4-loading-spinner>
+  <ng4-loading-spinner [loadingText]="'Loading...'" [timeout]="20000"></ng4-loading-spinner>
 </div>
+

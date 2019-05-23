@@ -1,9 +1,7 @@
 package com.netcracker.edu.backend.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +40,7 @@ public class Task {
     @Temporal(TemporalType.DATE)
     private Date created;
 
+    @FutureOrPresent(message = "Task min due date is today")
     @NotNull(message = "Task due date is required")
     @Temporal(TemporalType.DATE)
     private Date dueDate;
@@ -56,6 +55,7 @@ public class Task {
     private Date updated;
 
     @NotNull
+    @Min(value = 1, message = "Min estimation is 1 hour")
     private int estimation;
 
     @ManyToOne(targetEntity = User.class)
@@ -64,6 +64,15 @@ public class Task {
     @NotNull
     @ManyToOne(targetEntity = User.class)
     private User reporter;
+
+    @PrePersist
+    @PreUpdate
+    public void adjustDueDate() {
+        dueDate.setHours(23);
+        dueDate.setMinutes(59);
+        dueDate.setSeconds(59);
+        System.out.println("date updated " + dueDate);
+    }
 
     public Long getCode() {
         return code;

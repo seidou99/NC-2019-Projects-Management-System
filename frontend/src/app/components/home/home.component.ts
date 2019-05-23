@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {NewProjectComponent} from '../new-project/new-project.component';
 import {NewUserComponent} from '../new-user/new-user.component';
@@ -20,13 +20,15 @@ import {TaskOrder} from '../../models/task-order';
 import {TaskSortAndOrder} from '../../models/task-sort-and-order';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Ng4LoadingSpinnerService} from "ng4-loading-spinner";
+import {Alert} from "../../util/alert";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   page$ = new BehaviorSubject<Task[]>([]);
   taskType = TaskType.ALL;
@@ -36,19 +38,16 @@ export class HomeComponent implements OnInit {
   projects: Project[] = [];
   currentProjectId: number;
   pageNumber = 1;
-  pageSize = 10;
+  pageSize = 6;
   recordsAmount = 0;
   UserRole = UserRole;
-  alert = {
-    type: '',
-    message: '',
-    timer: 0,
-    showTime: 10000
-  };
+  alert: Alert;
+  subscriptions: Subscription[] = [];
 
   constructor(private modalService: NgbModal, private userService: UserService, private projectService: ProjectService,
               private router: Router, private taskService: TaskService, public authService: AuthService,
               private spinner: Ng4LoadingSpinnerService) {
+    this.alert = new Alert();
   }
 
   ngOnInit() {
@@ -56,7 +55,7 @@ export class HomeComponent implements OnInit {
       return;
     }
     this.spinner.show();
-    this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
+    const sub = this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (projects.length) {
         this.currentProjectId = projects[0].id;
@@ -64,10 +63,11 @@ export class HomeComponent implements OnInit {
       } else {
         this.spinner.hide();
       }
-    }, (e: Error) => {
-      console.log(e);
+    }, (e: HttpErrorResponse) => {
+      this.alert.showHttpError(e);
       this.spinner.hide();
     });
+    this.subscriptions.push(sub);
   }
 
   taskTypesChange(taskType: TaskType) {
@@ -83,13 +83,13 @@ export class HomeComponent implements OnInit {
   }
 
   searchTask(taskName: string) {
-    this.taskService.findTaskByName(taskName).subscribe((t: Task) => {
+    const sub = this.taskService.findTaskByName(taskName).subscribe((t: Task) => {
       this.router.navigate(['projects', t.project.id, 'tasks', t.id]);
     }, (e: HttpErrorResponse) => {
-      if (e.status === 404) {
-        this.showAlert(`Task with name '${taskName}' not found`, 'danger');
-      }
+      this.alert.showHttpError(e);
+      this.spinner.hide();
     });
+    this.subscriptions.push(sub);
   }
 
   taskSortChange(taskSort: TaskSortAndOrder) {
@@ -100,50 +100,49 @@ export class HomeComponent implements OnInit {
 
   loadProjects(afterLoadCallback?: any) {
     this.spinner.show();
-    this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
+    const sub = this.projectService.getAllProjects(this.taskType).subscribe((projects: Project[]) => {
       this.projects = projects;
       if (afterLoadCallback) {
         afterLoadCallback();
       }
       this.spinner.hide();
-    }, (e: Error) => {
-      console.log(e);
+    }, (e: HttpErrorResponse) => {
+      this.alert.showHttpError(e);
       this.spinner.hide()
     });
+    this.subscriptions.push(sub);
   }
 
   loadTasks() {
     this.spinner.show();
-    this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber, this.pageSize, this.taskType, this.taskSort)
-      .subscribe((data: Page<Task>) => {
-        this.page$.next(data.content);
-        this.recordsAmount = data.totalElements;
-        this.spinner.hide();
-      }, (e: Error) => {
-        this.spinner.hide();
-        console.log(e);
-      });
+    const sub = this.taskService.getTasksPage(`${this.currentProjectId}`, this.pageNumber,
+      this.pageSize, this.taskType, this.taskSort).subscribe((data: Page<Task>) => {
+      this.page$.next(data.content);
+      this.recordsAmount = data.totalElements;
+      this.spinner.hide();
+    }, (e: HttpErrorResponse) => {
+      this.spinner.hide();
+      this.alert.showHttpError(e);
+    });
+    this.subscriptions.push(sub);
   }
 
   openNewProjectModal() {
     const modalRef = this.modalService.open(NewProjectComponent);
     modalRef.result.then((project: Project) => {
       this.spinner.show();
-      this.projectService.createProject(project).subscribe(
+      const sub = this.projectService.createProject(project).subscribe(
         () => {
           this.loadProjects(null);
-          this.showAlert('Project created', 'success');
+          this.alert.showSuccess('Project created');
         },
         (e: HttpErrorResponse) => {
-          console.log(e);
           this.spinner.hide();
-          if (e.error && e.error.message) {
-            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
-          }
+          this.alert.showHttpError(e);
         }
       );
+      this.subscriptions.push(sub);
     }).catch((e) => {
-      console.log('rejected ' + e);
     });
   }
 
@@ -151,32 +150,21 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['projects', this.currentProjectId, 'tasks', taskId]);
   }
 
-  private showAlert(message: string, type: string) {
-    clearTimeout(this.alert.timer);
-    this.alert.message = message;
-    this.alert.type = type;
-    this.alert.timer = setTimeout(() => {
-      this.alert.message = '';
-    }, this.alert.showTime);
-  }
-
   openNewUserModal() {
     const modalRef = this.modalService.open(NewUserComponent);
     modalRef.result.then((user: User) => {
       this.spinner.show();
-      this.userService.createUser(user).subscribe(
+      const sub = this.userService.createUser(user).subscribe(
         () => {
           this.spinner.hide();
-          this.showAlert(`User with email ${user.authData.email} created`, 'success');
+          this.alert.showSuccess(`User with email ${user.authData.email} created`)
         },
         (e: HttpErrorResponse) => {
           this.spinner.hide();
-          if (e.error && e.error.message) {
-            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
-          }
-          console.log(e);
+          this.alert.showHttpError(e);
         }
       );
+      this.subscriptions.push(sub);
     }).catch((e) => {
       console.log('rejected ', e);
     });
@@ -186,18 +174,18 @@ export class HomeComponent implements OnInit {
     const modalRef = this.modalService.open(NewTaskComponent);
     modalRef.result.then((task: Task) => {
       this.spinner.show();
-      this.taskService.createTask(task).subscribe(() => {
+      const sub = this.taskService.createTask(task).subscribe(() => {
           this.loadTasks();
-          this.showAlert(`Task created`, 'success');
+          this.alert.showSuccess(`Task created`);
         },
         (e: HttpErrorResponse) => {
-          if (e.error && e.error.message) {
-            this.showAlert((e.error.message as string).replace(e.status + ' ', ''), 'danger');
-          }
+          this.spinner.hide();
+          this.alert.showHttpError(e);
         });
+      this.subscriptions.push(sub);
     }).catch((e) => {
-      console.log('rejected ' + e);
-    });
+      }
+    );
   }
 
   onPageChange(page: number) {
@@ -209,6 +197,7 @@ export class HomeComponent implements OnInit {
   projectChange(projectId: number) {
     this.currentProjectId = projectId;
     this.spinner.show();
+    this.pageNumber = 1;
     this.loadTasks();
   }
 
@@ -229,5 +218,9 @@ export class HomeComponent implements OnInit {
     const currentRole = this.authService.getUserRole();
     const reporterRoles = [UserRole.PROJECT_MANAGER, UserRole.DEVELOPER, UserRole.QA];
     return reporterRoles.findIndex((v: UserRole) => v === currentRole) > -1;
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(v => v.unsubscribe());
   }
 }

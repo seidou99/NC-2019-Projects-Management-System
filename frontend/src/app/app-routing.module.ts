@@ -6,6 +6,7 @@ import {TaskDashboardComponent} from './components/task-dashboard/task-dashboard
 import {RoleGuard} from './services/role.guard';
 import {UserRole} from './models/user-role';
 import {PageNotFoundComponent} from "./components/page-not-found/page-not-found.component";
+import {AlreadyLoggedInComponent} from "./components/already-logged-in/already-logged-in.component";
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
     data: {
       expectedRoles: [UserRole.PROJECT_MANAGER, UserRole.DEVELOPER, UserRole.QA]
     }
+  },
+  {
+    path: 'already-logged-in',
+    component: AlreadyLoggedInComponent
   },
   {
     path: '**',

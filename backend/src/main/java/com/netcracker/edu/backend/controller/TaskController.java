@@ -8,7 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 @RestController
@@ -62,25 +65,30 @@ public class TaskController {
     @GetMapping(value = "/{taskId}")
     public ResponseEntity<Task> findTaskById(@PathVariable(name = "taskId") Long taskId) {
         Optional<Task> task = taskService.findById(taskId);
-        if (task.isPresent()) {
-            return new ResponseEntity<>(task.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (!task.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
+        return new ResponseEntity<>(task.get(), HttpStatus.OK);
     }
 
     @GetMapping(params = {"name"})
     public ResponseEntity findTaskByName(@RequestParam("name") String taskName) {
         Optional<Task> task = taskService.findByName(taskName);
-        if (task.isPresent()) {
-            return new ResponseEntity<>(task.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        if (!task.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
+        return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping(value = "/{taskId}")
-    public Task updateTask(@RequestBody Task task) {
-        return taskService.update(task);
+    @PutMapping(value = "/{taskId}", produces = "application/json;charset=UTF-8")
+    public Task updateTask(@RequestBody Task task, HttpServletRequest request) {
+        try {
+            return taskService.update(task);
+        } catch (Exception e) {
+            String hd = request.getHeader("Accept");
+            ConstraintViolationException ex = (ConstraintViolationException)e.getCause().getCause();
+            throw ex;
+        }
+
     }
 }

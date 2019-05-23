@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import sun.rmi.runtime.Log;
 
 import java.io.IOException;
@@ -30,25 +31,25 @@ public class AttachmentController {
 
     @GetMapping(value = "/{attachmentId}", produces = "application/octet-stream")
     public ResponseEntity downloadFile(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId, @PathVariable("attachmentId") Long attachmentId) {
-        try {
-            String requestUri = this.backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId + "/attachments/" + attachmentId;
-            ResponseEntity<ByteArrayResource> response = restTemplate.getForEntity(requestUri, ByteArrayResource.class);
-            HttpHeaders headers = response.getHeaders();
-            String contentDisposition = headers.getContentDisposition().toString();
-            MediaType contentType = headers.getContentType();
-            return ResponseEntity.ok()
-                    .contentType(contentType)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
-                    .body(response.getBody());
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+        String requestUri = this.backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId + "/attachments/" + attachmentId;
+        ResponseEntity<ByteArrayResource> response = restTemplate.getForEntity(requestUri, ByteArrayResource.class);
+        HttpHeaders headers = response.getHeaders();
+        String contentDisposition = headers.getContentDisposition().toString();
+        MediaType contentType = headers.getContentType();
+        return ResponseEntity.ok()
+                .contentType(contentType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(response.getBody());
     }
 
     @PostMapping(produces = "application/json;charset=UTF-8")
     public ResponseEntity uploadFiles(@PathVariable("projectId") Long projectId, @PathVariable("taskId") Long taskId,
                                       @RequestParam("files") MultipartFile[] files) {
-        String attachmentsUri = backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/" + taskId + "/attachments";
+        if (files.length == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Attachments list is empty");
+        }
+        String attachmentsUri = backendApiProperties.getProjectsUri() + "/" + projectId + "/tasks/"
+                + taskId + "/attachments";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
@@ -64,19 +65,15 @@ public class AttachmentController {
                 body.add("files", fileEntity);
             }
         } catch (IOException e) {
-            return new ResponseEntity<>("Error while reading file", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while reading file");
         }
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(
-                    attachmentsUri,
-                    HttpMethod.POST,
-                    requestEntity,
-                    String.class
-            );
-            return new ResponseEntity<>(response.getBody(), HttpStatus.CREATED);
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
+        ResponseEntity<String> response = restTemplate.exchange(
+                attachmentsUri,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+        return new ResponseEntity<>(response.getBody(), HttpStatus.CREATED);
     }
 }

@@ -1,8 +1,14 @@
 <h4>Attachments</h4>
 <div *ngFor="let attachment of attachments" class="mt-3">
-  <button class="btn btn-outline-primary" (click)="downloadAttachmentClick(attachment.id)">{{attachment.fileName}}</button>
+  <button class="btn btn-outline-primary"
+          (click)="downloadAttachmentClick(attachment.id)">{{attachment.fileName}}</button>
 </div>
 <form [formGroup]="attachmentForm" (ngSubmit)="submitForm()" class="mt-4">
   <input-file [placeholder]="'Choose files'" formControlName="files">File</input-file>
-  <button class="btn btn-outline-success d-block mt-3" type="submit" [disabled]="attachmentForm.invalid">Upload attachments</button>
+  <div class="alert alert-danger mt-2 d-inline-block" *ngIf="hasError('files', 'maxFileSize')">
+    Max attachment size is {{validationConfigs.attachment.maxSize / 1024 / 1024 | number:'1.0-2'}} MB
+  </div>
+  <button class="btn btn-outline-success d-block mt-3" type="submit" [disabled]="attachmentForm.invalid">Upload
+    attachments
+  </button>
 </form>

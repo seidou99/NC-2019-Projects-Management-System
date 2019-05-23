@@ -8,7 +8,9 @@ import com.netcracker.edu.backend.service.CommentService;
 import com.netcracker.edu.backend.service.TaskService;
 import com.netcracker.edu.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 import java.util.Optional;
@@ -36,12 +38,12 @@ public class CommentServiceImpl implements CommentService {
     public Comment save(Comment comment, Long taskId) {
         Optional<Task> task = taskService.findById(taskId);
         if (!task.isPresent()) {
-            throw new RuntimeException("Task not found");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Task not found");
         }
         comment.setTask(task.get());
         Optional<User> author = userService.findById(comment.getAuthor().getId());
         if (!author.isPresent()) {
-            throw new RuntimeException("Author not found");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Author not found");
         }
         comment.setAuthor(author.get());
         comment.setDate(new Date());

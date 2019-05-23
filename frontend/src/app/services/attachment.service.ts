@@ -28,9 +28,7 @@ export class AttachmentService {
         console.log(data);
         let fileName = data.headers.get('content-disposition').split(';')[1].split('=')[1];
         fileName = fileName.substr(1, fileName.length - 2);
-        console.log(fileName);
         fileName = decodeURIComponent(fileName);
-        console.log(fileName);
         saveAs(data.body, fileName);
         return data;
       })

@@ -4,10 +4,8 @@
                  [isNewUserAvailable]="isNewUserAvailable()"
                  [isNewTaskAvailable]="isNewTaskAvailable()" (searchClick)="searchTask($event)">
 </app-home-navbar>
-
-<ngb-alert [type]="alert.type" *ngIf="alert.message" (close)="alert.message = ''">{{alert.message}}</ngb-alert>
-
-<div class="wrapper p-2 mt-5" *ngIf="authService.getUserRole() !== UserRole.ADMIN">
+<ngb-alert class="m-2" [type]="alert.type" *ngIf="alert.message" (close)="alert.message = ''">{{alert.message}}</ngb-alert>
+<div class="wrapper p-2 mt-3" *ngIf="authService.getUserRole() !== UserRole.ADMIN">
   <div class="container-fluid">
     <div class="row justify-content-between">
       <app-change-task-type [initialState$]="initialTaskTypes$"
@@ -27,7 +25,7 @@
     </div>
   </div>
 </div>
-<ng4-loading-spinner [loadingText]="'Loading...'"></ng4-loading-spinner>
+<ng4-loading-spinner [loadingText]="'Loading...'" [timeout]="20000"></ng4-loading-spinner>
 
 
 

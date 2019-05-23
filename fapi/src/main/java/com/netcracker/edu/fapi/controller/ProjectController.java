@@ -44,12 +44,7 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity createProject(@RequestBody Object project) {
-        try {
-            restTemplate.postForObject(backendApiProperties.getProjectsUri(), project, String.class);
-            return new ResponseEntity(HttpStatus.CREATED);
-        } catch (HttpStatusCodeException e) {
-            return new ResponseEntity<>(e.getResponseBodyAsString(), e.getStatusCode());
-        }
-
+        restTemplate.postForObject(backendApiProperties.getProjectsUri(), project, String.class);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
